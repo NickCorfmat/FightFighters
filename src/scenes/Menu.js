@@ -10,7 +10,7 @@ class Menu extends Phaser.Scene {
         this.load.image('menu_background', './assets/menu_background.png')
         this.load.image('play_background', './assets/play_background.png')
         this.load.image('trench', './assets/trench.png')
-        this.load.image('edge', './assets/line.png')
+        this.load.image('wall', './assets/wall.png')
         this.load.image('side-plane', './assets/plane_sideview.png')
 
         this.load.spritesheet('title', './assets/title.png', {

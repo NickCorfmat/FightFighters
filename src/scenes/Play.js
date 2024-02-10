@@ -6,16 +6,16 @@ class Play extends Phaser.Scene {
     init() {
         distance = 0
 
-        this.edges = []
+        this.walls = []
         this.trenches = []
         this.degrees = 0
-        this.playerSpeed = 5
-        this.pathWidth = 200
+        this.pathWidth = 300
 
         this.xoff = 0
         this.seconds;
 
         this.x = map(noise(this.xoff), 0, 1, 0, width)
+        this.prevX = this.x
     }
 
     create() {
@@ -55,7 +55,7 @@ class Play extends Phaser.Scene {
 
         this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5)
         this.player.setScale(1.4)
-        this.player.body.setSize(50, 50)
+        this.player.body.setCircle(25, 15, 40)
         this.player.body.setCollideWorldBounds(true)
 
     }
@@ -63,19 +63,19 @@ class Play extends Phaser.Scene {
     update() {
         let elapsedTime = this.timedEvent.getElapsedSeconds();
         distance = Math.floor(elapsedTime) * 10
-        console.log(distance)
+        //console.log(distance)
 
         this.player.play('flying', true)
 
         /*** Scene Update ***/
 
-        this.background.tilePositionY -= 5
+        this.background.tilePositionY -= 2.5
 
         /*** Player Movement ***/
 
         // left/right
         if (keySPACE.isDown) {
-            this.player.body.setAccelerationX(600)
+            this.player.body.setAccelerationX(1200)
         } else {
             this.player.body.setAccelerationX(-600)
         }
@@ -84,24 +84,19 @@ class Play extends Phaser.Scene {
 
         this.fluctuate()
 
-        // for (var i = 0; i < this.edges.length; i++) {
-        //     var e = this.edges[i]
-        //     e.update()
+        for (var i = 0; i < this.walls.length; i++) {
+            var w = this.walls[i]
+            w.update()
 
-        //     if (e.y > 960) {
-        //         e.destroy()
-        //         this.edges.splice(i, 1)
-        //     } 
-        // }
+            if (w.y > 960) {
+                w.destroy()
+                this.walls.splice(i, 1)
+            } 
+        }
 
         for (var i = 0; i < this.trenches.length; i++) {
             var t = this.trenches[i]
-            t.y += 10
-
-            // if (this.player.body.onWall(t)) {
-            //     this.handleCollision(this.player, t)
-            //     console.log('true')
-            // }
+            t.y += 5
 
             if (t.y > 960) {
                 t.destroy()
@@ -123,31 +118,53 @@ class Play extends Phaser.Scene {
         if (this.degrees % 2 == 0) {
             this.x = map(noise(this.xoff), 0, 1, 0, width)
 
-            //console.log(x)
+            //console.log(this.prevX)
 
-            // var e1 = new Edge(this, this.x - this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5).setScale(1, 0.25)
-            // var e2 = new Edge(this, this.x + this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5).setScale(1, 0.25)
+            var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall').setOrigin(0.5)
+            var rightWall = new Wall(this, this.x + this.pathWidth, -100, 'wall').setOrigin(0.5)
 
-            // e1.body.setSize(25, 50).setOffset(39, 7)
-            // e2.body.setSize(25, 50).setOffset(39, 7)
+            leftWall.alpha = 0
+            rightWall.alpha = 0
 
-            // e1.body.setImmovable(true)
-            // e2.body.setImmovable(true)
+            leftWall.body.setSize(5, 20)
+            rightWall.body.setSize(5, 20)
 
-            // this.physics.add.collider(this.player, e1, this.handleCollision, null, this)
-            // this.physics.add.collider(this.player, e2, this.handleCollision, null, this)
+            leftWall.body.setOffset(-20, 0)
+            rightWall.body.setOffset(20, 0)
 
-            // this.edges.push(e1)
-            // this.edges.push(e2)
+            leftWall.body.setImmovable(true)
+            rightWall.body.setImmovable(true)
 
-            var t = this.physics.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3, 0.25)
-            t.body.setImmovable(true)
-            t.body.checkCollision.down = false
-            t.body.checkCollision.up = false
+            this.physics.add.collider(this.player, leftWall, this.handleCollision, null, this)
+            this.physics.add.collider(this.player, rightWall, this.handleCollision, null, this)
 
-            this.physics.add.collider(this.player, t, this.handleCollision, null, this)
+            this.walls.push(leftWall)
+            this.walls.push(rightWall)
 
+            // if (Math.abs(this.x - this.prevX) >= 10) {
+            //     console.log('hi')
+            //     let direction = this.x > this.prevX ? 1 : -1
+            //     let stepSize = Math.abs(this.x - this.prevX)/5
+
+            //     for (let stepX = this.prevX; direction == 1 ? stepX <= this.x : stepX >= this.x; stepX += stepSize) {
+            //         var t = this.physics.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3, 0.25)
+            //         t.body.setImmovable(true)
+            //         t.body.checkCollision.down = false
+            //         t.body.checkCollision.up = false
+
+            //         this.physics.add.collider(this.player, t, this.handleCollision, null, this)
+
+            //         this.trenches.push(t)
+            //     }
+            // } else {
+            let t = this.add.sprite(this.x, -100, 'trench').setOrigin(0.5)
+            t.displayWidth = this.pathWidth*2
+            t.displayHeight = t.height/4
             this.trenches.push(t)
+
+            //}
+
+            this.prevX = this.x
         }
 
         this.degrees++
@@ -155,6 +172,7 @@ class Play extends Phaser.Scene {
     }
 
     handleCollision(player, edge) {
+        console.log('collision')
         this.shipExplode(player)
     }
 
