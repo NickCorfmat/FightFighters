@@ -6,7 +6,9 @@ let config = {
     type: Phaser.AUTO,
     width: 1200,
     height: 800,
-    pixelArt: true,
+    render: {
+        pixelArt: true
+    },
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
@@ -28,8 +30,11 @@ let keyLEFT
 let keyRIGHT
 let keyUP
 let keyDOWN
+let keyI
+let keyC
+let keyM
 
 // define globals
 let { height, width } = game.config
+let highscore = 0
 let distance
-let highscore

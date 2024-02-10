@@ -4,9 +4,17 @@ class Play extends Phaser.Scene {
     }
 
     init() {
+        distance = 0
+
         this.edges = []
         this.degrees = 0
         this.playerSpeed = 5
+        this.pathWidth = 200
+
+        this.xoff = 0
+        this.seconds;
+
+        this.x = map(noise(this.xoff), 0, 1, 0, width)
     }
 
     create() {
@@ -16,51 +24,78 @@ class Play extends Phaser.Scene {
 
         /*** World Setup ***/
 
-        this.cameras.main.setBackgroundColor('#AAAAAA')
+        this.background = this.add.tileSprite(0, 0, 600, 400, 'play_background').setOrigin(0).setScale(2)
+
+        // this.timedEvent = this.time.addEvent({
+        //     delay: 1000,
+        //     repeat: -1,
+        //     callback: () => {
+        //       let elapsedTime = new Date();
+        //       this.seconds = elapsedTime.getSeconds()
+        //       this.distance = this.seconds * 10
+
+        //     }
+        //   });
 
         /*** Player Setup ***/
 
-        const spawnX = 200 + Phaser.Math.Between(0, 4)
-        this.player = new Player(this, spawnX, height-120, 'cone').setOrigin(0.5, 0.5)
+        this.anims.create({
+            key: 'flying',
+            frameRate: 15,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('player', {
+                start: 0,
+                end: 3
+            })
+        })
+
+        this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5).setScale(1.5)
+        this.player.body.setSize(50, 50)
         this.player.body.setCollideWorldBounds(true)
 
         // this.player.body.setVelocity(100, 0)
 
         // this.physics.add.collider(this.player, this.car, this.handleCollision, null, this)
+
+        /*** Temporary ***/
     }
 
     update() {
 
+        this.player.play('flying', true)
+
         /*** Scene Update ***/
 
-        //this.background.tilePositionY -= this.speed
+        this.background.tilePositionY -= 5
 
         /*** Player Movement ***/
 
         // left/right
         if (keySPACE.isDown) {
-            this.player.x = this.player.x + this.playerSpeed > width - 100 ? width - 100 : this.player.x + this.playerSpeed;
+            this.player.body.setAccelerationX(600)
         } else {
-            this.player.x = this.player.x - this.playerSpeed < 100 ? 100 : this.player.x - this.playerSpeed;
+            this.player.body.setAccelerationX(-600)
         }
 
-        /*** Edges ***/
+        /*** Path Generation ***/
 
-          //this.fluctuate()
+        this.fluctuate()
 
-        //this.player.update()
+        for (var i = 0; i < this.edges.length; i++) {
+            var e = this.edges[i]
+            e.update()
 
-        // for (var i = 0; i < this.edges.length; i++) {
-        //     var e = this.edges[i]
-        //     e.update()
+            if (e.y > 960) {
+                e.destroy()
+                this.edges.splice(i, 1)
+            } 
+        }
 
-        //     if (e.y > 960) {
-        //         e.destroy()
-        //         this.edges.splice(i, 1)
-        //     } 
-        // }
+        //console.log(this.distance)
+        
+        //console.log(this.edges.length)
 
-        // console.log(this.edges.length)
+        //this.pathWidth--
         
     }
 
@@ -69,25 +104,58 @@ class Play extends Phaser.Scene {
             this.degrees = 0
         }
 
-        if (this.degrees % 20 == 0) {
-            let radians = this.degrees * Math.PI/180;
-            let x = 150*Math.sin(radians) + 320
+        if (this.degrees % 4 == 0) {
+            this.xoff += 0.02
+        }
+
+        if (this.degrees % 10 == 0) {
+            this.x = map(noise(this.xoff), 0, 1, 0, width)
+
             //console.log(x)
 
-            var e1 = new Edge(this, x + 100, -100, 'cone').setOrigin(0, 0)
-            var e2 = new Edge(this, x -100, -100, 'cone').setOrigin(0, 0)
+            var e1 = new Edge(this, this.x - this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5)
+            var e2 = new Edge(this, this.x + this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5)
 
-            e1.body.setSize(40, 40).setOffset(5, 5)
-            e2.body.setSize(40, 40).setOffset(5, 5)
+            e1.body.setSize(25, 100).setOffset(39, 7)
+            e2.body.setSize(25, 100).setOffset(39, 7)
+
+            e1.body.setImmovable(true)
+            e2.body.setImmovable(true)
+
+            this.physics.add.collider(this.player, e1, this.handleCollision, null, this)
+            this.physics.add.collider(this.player, e2, this.handleCollision, null, this)
 
             this.edges.push(e1)
             this.edges.push(e2)
         }
 
         this.degrees++
-    }
-
-    handleCollision(player, cone) {
         
     }
+
+    handleCollision(player, edge) {
+        this.shipExplode(player)
+    }
+
+    shipExplode(player) {
+        // // temporarily hide plane
+        // player.alpha = 0
+
+        // // create explosion sprite at plane's position
+        // let boom = this.add.sprite(player.x, player.y, 'explosion').setOrigin(0, 0);
+        // boom.anims.play('explode')              // play explode animation
+        // boom.on('animationcomplete', () => {    // callback after anim completes
+        //     boom.destroy()                      // remove explosion sprite 
+        // })
+
+        // // check/update high score
+        // highscore = Math.max(highscore, distance)
+        
+        // this.sound.play('sfx-explosion')
+    }
+}
+
+function setup() {
+    createCanvas(0, 0)
+    frameRate(1)
 }
