@@ -5,7 +5,7 @@ class Player extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this)            // add to existing, displayList, updateList
         scene.physics.add.existing(this)    // add physics
-        
+        this.depth = 2
     }
 
     update() {

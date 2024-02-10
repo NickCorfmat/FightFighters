@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         distance = 0
 
         this.edges = []
+        this.trenches = []
         this.degrees = 0
         this.playerSpeed = 5
         this.pathWidth = 200
@@ -49,15 +50,11 @@ class Play extends Phaser.Scene {
             })
         })
 
-        this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5).setScale(1.5)
+        this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5)
+        this.player.setScale(1.4)
         this.player.body.setSize(50, 50)
         this.player.body.setCollideWorldBounds(true)
 
-        // this.player.body.setVelocity(100, 0)
-
-        // this.physics.add.collider(this.player, this.car, this.handleCollision, null, this)
-
-        /*** Temporary ***/
     }
 
     update() {
@@ -91,11 +88,15 @@ class Play extends Phaser.Scene {
             } 
         }
 
-        //console.log(this.distance)
-        
-        //console.log(this.edges.length)
+        for (var i = 0; i < this.trenches.length; i++) {
+            var t = this.trenches[i]
+            t.y += 10
 
-        //this.pathWidth--
+            if (t.y > 960) {
+                t.destroy()
+                this.trenches.splice(i, 1)
+            } 
+        }
         
     }
 
@@ -127,6 +128,10 @@ class Play extends Phaser.Scene {
 
             this.edges.push(e1)
             this.edges.push(e2)
+
+            var t = this.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3)
+
+            this.trenches.push(t)
         }
 
         this.degrees++
