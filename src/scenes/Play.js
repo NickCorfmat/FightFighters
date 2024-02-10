@@ -27,16 +27,19 @@ class Play extends Phaser.Scene {
 
         this.background = this.add.tileSprite(0, 0, 600, 400, 'play_background').setOrigin(0).setScale(2)
 
-        // this.timedEvent = this.time.addEvent({
+        // this.clock = this.time.addEvent({
         //     delay: 1000,
         //     repeat: -1,
         //     callback: () => {
         //       let elapsedTime = new Date();
         //       this.seconds = elapsedTime.getSeconds()
-        //       this.distance = this.seconds * 10
+        //       this.distance = this.seconds * 5
+        //       console.log(this.distance)
 
         //     }
         //   });
+
+        this.timedEvent = this.time.addEvent({ delay: 6000000, callback: this.onClockEvent, callbackScope: this, repeat: 1 })
 
         /*** Player Setup ***/
 
@@ -58,6 +61,9 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        let elapsedTime = this.timedEvent.getElapsedSeconds();
+        distance = Math.floor(elapsedTime) * 10
+        console.log(distance)
 
         this.player.play('flying', true)
 
@@ -78,26 +84,31 @@ class Play extends Phaser.Scene {
 
         this.fluctuate()
 
-        for (var i = 0; i < this.edges.length; i++) {
-            var e = this.edges[i]
-            e.update()
+        // for (var i = 0; i < this.edges.length; i++) {
+        //     var e = this.edges[i]
+        //     e.update()
 
-            if (e.y > 960) {
-                e.destroy()
-                this.edges.splice(i, 1)
-            } 
-        }
+        //     if (e.y > 960) {
+        //         e.destroy()
+        //         this.edges.splice(i, 1)
+        //     } 
+        // }
 
         for (var i = 0; i < this.trenches.length; i++) {
             var t = this.trenches[i]
             t.y += 10
+
+            // if (this.player.body.onWall(t)) {
+            //     this.handleCollision(this.player, t)
+            //     console.log('true')
+            // }
 
             if (t.y > 960) {
                 t.destroy()
                 this.trenches.splice(i, 1)
             } 
         }
-        
+
     }
 
     fluctuate() {
@@ -109,27 +120,32 @@ class Play extends Phaser.Scene {
             this.xoff += 0.02
         }
 
-        if (this.degrees % 10 == 0) {
+        if (this.degrees % 2 == 0) {
             this.x = map(noise(this.xoff), 0, 1, 0, width)
 
             //console.log(x)
 
-            var e1 = new Edge(this, this.x - this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5)
-            var e2 = new Edge(this, this.x + this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5)
+            // var e1 = new Edge(this, this.x - this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5).setScale(1, 0.25)
+            // var e2 = new Edge(this, this.x + this.pathWidth, -100, 'edge').setOrigin(0.5, 0.5).setScale(1, 0.25)
 
-            e1.body.setSize(25, 100).setOffset(39, 7)
-            e2.body.setSize(25, 100).setOffset(39, 7)
+            // e1.body.setSize(25, 50).setOffset(39, 7)
+            // e2.body.setSize(25, 50).setOffset(39, 7)
 
-            e1.body.setImmovable(true)
-            e2.body.setImmovable(true)
+            // e1.body.setImmovable(true)
+            // e2.body.setImmovable(true)
 
-            this.physics.add.collider(this.player, e1, this.handleCollision, null, this)
-            this.physics.add.collider(this.player, e2, this.handleCollision, null, this)
+            // this.physics.add.collider(this.player, e1, this.handleCollision, null, this)
+            // this.physics.add.collider(this.player, e2, this.handleCollision, null, this)
 
-            this.edges.push(e1)
-            this.edges.push(e2)
+            // this.edges.push(e1)
+            // this.edges.push(e2)
 
-            var t = this.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3)
+            var t = this.physics.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3, 0.25)
+            t.body.setImmovable(true)
+            t.body.checkCollision.down = false
+            t.body.checkCollision.up = false
+
+            this.physics.add.collider(this.player, t, this.handleCollision, null, this)
 
             this.trenches.push(t)
         }
