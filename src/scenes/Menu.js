@@ -6,13 +6,16 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
-        // load images/spritesheets/tile sprites
+        // load images
         this.load.image('menu_background', './assets/menu_background.png')
         this.load.image('play_background', './assets/play_background.png')
+        this.load.image('instructions_background', './assets/instructions_background.png')
+        this.load.image('clouds', './assets/clouds.png')
         this.load.image('trench', './assets/trench.png')
         this.load.image('wall', './assets/wall.png')
         this.load.image('side-plane', './assets/plane_sideview.png')
 
+        // load spritesheets
         this.load.spritesheet('title', './assets/title.png', {
             frameWidth: 110,
             frameHeight: 40
@@ -26,33 +29,17 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-
         // text config
-        let menuConfig = {
-            fontFamily: 'Courier',
+        let textConfig = {
+            fontFamily: '"Press Start 2P"',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
             color: '#843605',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
+            align: 'center',
+            lineSpacing: 10,
             fixedWidth: 0
         }
 
-        // define keys
-        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-        keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I)
-        keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
-        
-        // menu background
-        this.background = this.add.tileSprite(0, 0, 300, 200, 'menu_background').setOrigin(0).setScale(4)
-
-        // add text
-        this.add.text(width/2, height/2, 'Press SPACE to start', menuConfig).setOrigin(0.5)
-        
-        // title animation configuration
+        // title animation config
         this.anims.create({
             key: 'gameTitle',
             frameRate: 2,
@@ -63,10 +50,21 @@ class Menu extends Phaser.Scene {
             })
         })
 
+        // define keys
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I)
+        keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
+        
+        // menu background
+        this.background = this.add.tileSprite(0, 0, 300, 200, 'menu_background').setOrigin(0).setScale(4)
+
+        // menu text
+        this.add.text(width/2, height/4 + 190, 'Press SPACE to start\nInstructions (I)\nCredits (C)', textConfig).setOrigin(0.5)
+
         // plane sprite
         this.plane = this.physics.add.sprite(width/4, 2*height/3, 'side-plane').setOrigin(0).setScale(3)
 
-        // title sprite
+        // title animation
         this.title = this.add.sprite(width/2, height/4).setScale(6).setOrigin(0.5)
         this.title.play('gameTitle')
     }
@@ -82,7 +80,7 @@ class Menu extends Phaser.Scene {
         this.plane.body.setAccelerationY(accelerationY)
         this.plane.body.setAccelerationX(accelerationX)
 
-        // select Play scene
+        // check for transition to play scene
         if (Phaser.Input.Keyboard.JustDown(keySPACE) && !this.isTransitioning) {
             this.isTransitioning = true
             this.cameras.main.fadeOut(0, 255, 255, 255)
@@ -91,10 +89,12 @@ class Menu extends Phaser.Scene {
             })
         }
 
+        // check for transition to instructions scene
         if (Phaser.Input.Keyboard.JustDown(keyI)) {
             this.scene.start('instructionScene')
         }
 
+        // check for transition to credits scene
         if (Phaser.Input.Keyboard.JustDown(keyC)) {
             this.scene.start('creditScene')
         }
