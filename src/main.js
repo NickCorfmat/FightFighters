@@ -33,5 +33,7 @@ let keyM
 
 // define globals
 let { height, width } = game.config
+let backgroundMusic
+let musicOn
 let highscore = 0
 let distance
