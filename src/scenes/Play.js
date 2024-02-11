@@ -10,10 +10,8 @@ class Play extends Phaser.Scene {
         this.trenches = []
         this.degrees = 0
         this.pathWidth
-
-        this.xoff = 0
+        this.xoff = Math.random(0, 1)
         this.seconds;
-
         this.x = map(noise(this.xoff), 0, 1, 0, width)
         this.prevX = this.x
     }
@@ -59,6 +57,22 @@ class Play extends Phaser.Scene {
         textConfig.fontSize = '20px'
         this.pathText = this.add.text(40, 170, 'Canyon Width: 500ft', textConfig)
         this.pathText.setDepth(3)
+
+        // 'canyon ahead' animation config
+        this.anims.create({
+            key: 'canyon-ahead',
+            frameRate: 4,
+            repeat: 5,
+            duration: 2000,
+            hideOnComplete: true,
+            frames: this.anims.generateFrameNumbers('warning', {
+                start: 0,
+                end: 1
+            })
+        })
+
+        this.canyonAhead = this.add.sprite(width/2 + 30, 2*height/5, 'warning').setOrigin(0.5).setScale(5).setDepth(5)
+        this.canyonAhead.play('canyon-ahead', true)
 
         /*** Player Setup ***/
 
@@ -124,6 +138,8 @@ class Play extends Phaser.Scene {
         this.crashText.setDepth(6)
         this.crashText.setAlpha(0)
 
+        textConfig.backgroundColor = '#e3a46a'
+        textConfig.fontSize = '30px'
         this.gameOverOptions = this.add.text(width/2, height/2 + 100, 'Restart (R)\nMenu (M)', textConfig).setOrigin(0.5).setDepth(7)
         this.gameOverOptions.setAlpha(0)
 
@@ -131,6 +147,8 @@ class Play extends Phaser.Scene {
         this.gameOverScore = this.add.text(width/2, height/2, 'Score: ' + distance + 'm', textConfig).setOrigin(0.5).setDepth(7)
         this.gameOverScore.setAlpha(0)
 
+        // explosion sound
+        this.explosion = this.sound.add('explosion', { loop: false, volume: 0.4})
     }
 
     update() {
@@ -153,66 +171,58 @@ class Play extends Phaser.Scene {
                 this.scene.start("menuScene")
             }
         } else {
-        // check key input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
-            this.scene.restart()
-        }
 
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyM)) {
-            this.scene.start("menuScene")
-        }
+            /*** Scene Update ***/
 
-        /*** Scene Update ***/
+            this.background.tilePositionY -= 2.5
 
-        this.background.tilePositionY -= 2.5
+            /*** Player Movement ***/
 
-        /*** Player Movement ***/
-
-        if (this.player.body.velocity.x >= 150) {
-            this.player.play('fly-right', true)
-        } else if (this.player.body.velocity.x <= -150) {
-            this.player.play('fly-left', true)
-        } else {
-            this.player.play('fly-straight', true)
-        }
-
-        // left/right
-        if (keySPACE.isDown) {
-            this.player.body.setAccelerationX(1200)
-        } else {
-            this.player.body.setAccelerationX(-600)
-        }
-
-        /*** Path Generation ***/
-
-        // generate random terrain using perlin noise
-        this.generateTerrain()
-
-        // update borders
-        for (var i = 0; i < this.walls.length; i++) {
-            var w = this.walls[i]
-            w.update()
-            if (w.y > 960) {
-                w.destroy()
-                this.walls.splice(i, 1)
-            } 
-        }
-
-        // update trench sprite and update score
-        for (var i = 0; i < this.trenches.length; i++) {
-            var t = this.trenches[i]
-            t.y += 5
-
-            if (t.y == this.player.y) {
-                distance += 1
+            if (this.player.body.velocity.x >= 150) {
+                this.player.play('fly-right', true)
+            } else if (this.player.body.velocity.x <= -150) {
+                this.player.play('fly-left', true)
+            } else {
+                this.player.play('fly-straight', true)
             }
 
-            if (t.y > 960) {
-                t.destroy()
-                this.trenches.splice(i, 1)
-            } 
+            // left/right
+            if (keySPACE.isDown) {
+                this.player.body.setAccelerationX(1200)
+            } else {
+                this.player.body.setAccelerationX(-600)
+            }
+
+            /*** Path Generation ***/
+
+            // generate random terrain using perlin noise
+            this.generateTerrain()
+
+            // update borders
+            for (var i = 0; i < this.walls.length; i++) {
+                var w = this.walls[i]
+                w.update()
+                if (w.y > 960) {
+                    w.destroy()
+                    this.walls.splice(i, 1)
+                } 
+            }
+
+            // update trench sprite and update score
+            for (var i = 0; i < this.trenches.length; i++) {
+                var t = this.trenches[i]
+                t.y += 5
+
+                if (t.y == this.player.y) {
+                    distance += 1
+                }
+
+                if (t.y > 960) {
+                    t.destroy()
+                    this.trenches.splice(i, 1)
+                } 
+            }
         }
-    }
     }
 
     generateTerrain() {
@@ -227,8 +237,7 @@ class Play extends Phaser.Scene {
         if (this.degrees % 3 == 0) {
 
             // game difficulty function
-            this.pathWidth = 500000/(distance + 1000)
-            console.log(this.pathWidth)
+            this.pathWidth = 200000/(2*distance + 350) + 110
             this.pathText.text = 'Canyon Width: ' + Math.floor(this.pathWidth) + 'ft'
 
             // Perlin noise generation, courtesy of p5.js library
@@ -242,9 +251,6 @@ class Play extends Phaser.Scene {
 
             leftWall.body.setSize(5, 20)
             rightWall.body.setSize(5, 20)
-
-            leftWall.body.setOffset(-20, 0)
-            rightWall.body.setOffset(20, 0)
 
             leftWall.body.setImmovable(true)
             rightWall.body.setImmovable(true)
@@ -267,7 +273,6 @@ class Play extends Phaser.Scene {
     }
 
     handleCollision(player, edge) {
-        //console.log('collision')
         this.player.body.setAccelerationX(0)
         this.player.body.setVelocityX(0)
 
