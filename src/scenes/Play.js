@@ -19,32 +19,44 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        // GAME OVER flag
+        this.gameOver = false
 
         // define keys
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+        keyRESET = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+        keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
         /*** World Setup ***/
 
+        // text config
+        let textConfig = {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '50px',
+            backgroundColor: '#9ab6bf',
+            color: '#000000',
+            align: 'center',
+            padding: {
+                top: 15,
+                bottom: 15,
+                left: 15,
+                right: 15
+            },
+            bold: true,
+            lineSpacing: 10,
+            fixedWidth: 0
+        }
+
         this.background = this.add.tileSprite(0, 0, 600, 400, 'play_background').setOrigin(0).setScale(2)
 
-        // this.clock = this.time.addEvent({
-        //     delay: 1000,
-        //     repeat: -1,
-        //     callback: () => {
-        //       let elapsedTime = new Date();
-        //       this.seconds = elapsedTime.getSeconds()
-        //       this.distance = this.seconds * 5
-        //       console.log(this.distance)
-
-        //     }
-        //   });
-
-        this.timedEvent = this.time.addEvent({ delay: 6000000, callback: this.onClockEvent, callbackScope: this, repeat: 1 })
+        this.score = this.add.text(40, 40, distance + 'm', textConfig)
+        this.score.setDepth(3)
 
         /*** Player Setup ***/
 
+        // plane animation config
         this.anims.create({
-            key: 'flying',
+            key: 'fly-straight',
             frameRate: 15,
             repeat: -1,
             frames: this.anims.generateFrameNumbers('player', {
@@ -53,25 +65,69 @@ class Play extends Phaser.Scene {
             })
         })
 
+        this.anims.create({
+            key: 'fly-right',
+            frameRate: 15,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('player', {
+                start: 4,
+                end: 5
+            })
+        })
+
+        this.anims.create({
+            key: 'fly-left',
+            frameRate: 15,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('player', {
+                start: 6,
+                end: 7
+            })
+        })
+
+        // player character initialization
         this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5)
         this.player.setScale(1.4)
         this.player.body.setCircle(25, 15, 40)
+        this.player.body.setImmovable(true)
         this.player.body.setCollideWorldBounds(true)
 
     }
 
     update() {
-        let elapsedTime = this.timedEvent.getElapsedSeconds();
-        distance = Math.floor(elapsedTime) * 10
-        //console.log(distance)
 
-        this.player.play('flying', true)
+        if (this.gameOver) {
+            if (Phaser.Input.Keyboard.JustDown(keyRESET)) {
+                this.scene.restart()
+            }
+
+            if (Phaser.Input.Keyboard.JustDown(keyM)) {
+                this.scene.start("menuScene")
+            }
+        } else {
+        // check key input for restart
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyRESET)) {
+            this.scene.restart()
+        }
+
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyM)) {
+            this.scene.start("menuScene")
+        }
 
         /*** Scene Update ***/
 
         this.background.tilePositionY -= 2.5
+        this.score.text = distance + 'm'
 
         /*** Player Movement ***/
+
+        if (this.player.body.velocity.x >= 150) {
+            this.player.play('fly-right', true)
+        } else if (this.player.body.velocity.x <= -150) {
+            this.player.play('fly-left', true)
+        } else {
+            this.player.play('fly-straight', true)
+        }
 
         // left/right
         if (keySPACE.isDown) {
@@ -82,21 +138,27 @@ class Play extends Phaser.Scene {
 
         /*** Path Generation ***/
 
-        this.fluctuate()
+        // generate random terrain using perlin noise
+        this.generateTerrain()
 
+        // update borders
         for (var i = 0; i < this.walls.length; i++) {
             var w = this.walls[i]
             w.update()
-
             if (w.y > 960) {
                 w.destroy()
                 this.walls.splice(i, 1)
             } 
         }
 
+        // update trench sprite and update score
         for (var i = 0; i < this.trenches.length; i++) {
             var t = this.trenches[i]
             t.y += 5
+
+            if (t.y == this.player.y) {
+                distance += 1
+            }
 
             if (t.y > 960) {
                 t.destroy()
@@ -104,10 +166,13 @@ class Play extends Phaser.Scene {
             } 
         }
 
+        console.log(this.walls.length)
+        console.log(this.trenches.length)
+    }
     }
 
-    fluctuate() {
-        if (this.degrees > 360) {
+    generateTerrain() {
+        if (this.degrees >= 360) {
             this.degrees = 0
         }
 
@@ -115,10 +180,8 @@ class Play extends Phaser.Scene {
             this.xoff += 0.02
         }
 
-        if (this.degrees % 2 == 0) {
+        if (this.degrees % 3 == 0) {
             this.x = map(noise(this.xoff), 0, 1, 0, width)
-
-            //console.log(this.prevX)
 
             var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall').setOrigin(0.5)
             var rightWall = new Wall(this, this.x + this.pathWidth, -100, 'wall').setOrigin(0.5)
@@ -141,56 +204,28 @@ class Play extends Phaser.Scene {
             this.walls.push(leftWall)
             this.walls.push(rightWall)
 
-            // if (Math.abs(this.x - this.prevX) >= 10) {
-            //     console.log('hi')
-            //     let direction = this.x > this.prevX ? 1 : -1
-            //     let stepSize = Math.abs(this.x - this.prevX)/5
-
-            //     for (let stepX = this.prevX; direction == 1 ? stepX <= this.x : stepX >= this.x; stepX += stepSize) {
-            //         var t = this.physics.add.sprite(this.x, -100, 'trench').setOrigin(0.5).setScale(1.3, 0.25)
-            //         t.body.setImmovable(true)
-            //         t.body.checkCollision.down = false
-            //         t.body.checkCollision.up = false
-
-            //         this.physics.add.collider(this.player, t, this.handleCollision, null, this)
-
-            //         this.trenches.push(t)
-            //     }
-            // } else {
             let t = this.add.sprite(this.x, -100, 'trench').setOrigin(0.5)
             t.displayWidth = this.pathWidth*2
-            t.displayHeight = t.height/4
+            t.flipX = this.x >= this.prevX ? false : true
             this.trenches.push(t)
-
-            //}
 
             this.prevX = this.x
         }
 
         this.degrees++
-        
     }
 
     handleCollision(player, edge) {
-        console.log('collision')
+        //console.log('collision')
+        this.player.body.setAccelerationX(0)
+        this.player.body.setVelocityX(0)
+
         this.shipExplode(player)
+        this.gameOver = true
     }
 
     shipExplode(player) {
-        // // temporarily hide plane
-        // player.alpha = 0
 
-        // // create explosion sprite at plane's position
-        // let boom = this.add.sprite(player.x, player.y, 'explosion').setOrigin(0, 0);
-        // boom.anims.play('explode')              // play explode animation
-        // boom.on('animationcomplete', () => {    // callback after anim completes
-        //     boom.destroy()                      // remove explosion sprite 
-        // })
-
-        // // check/update high score
-        // highscore = Math.max(highscore, distance)
-        
-        // this.sound.play('sfx-explosion')
     }
 }
 

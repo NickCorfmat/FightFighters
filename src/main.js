@@ -26,10 +26,7 @@ let game = new Phaser.Game(config)
 
 // reserve keyboard bindings
 let keySPACE
-let keyLEFT
-let keyRIGHT
-let keyUP
-let keyDOWN
+let keyRESET
 let keyI
 let keyC
 let keyM

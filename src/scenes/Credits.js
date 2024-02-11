@@ -3,14 +3,10 @@ class Credits extends Phaser.Scene {
         super("creditScene")
     }
 
-    preload() {
-      
-    }
-
     create() {
         keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
-        this.cameras.main.setBackgroundColor('#FFFFFF')
+        this.cameras.main.setBackgroundColor('#aac6cc')
     }
 
     update() {

@@ -1,8 +1,6 @@
 class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene")
-
-        this.isTransitioning = false
     }
 
     preload() {
@@ -29,6 +27,8 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
+        this.isTransitioning = false
+
         // text config
         let textConfig = {
             fontFamily: '"Press Start 2P"',
