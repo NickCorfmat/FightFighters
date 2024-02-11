@@ -32,7 +32,7 @@ class Play extends Phaser.Scene {
         // text config
         let textConfig = {
             fontFamily: '"Press Start 2P"',
-            fontSize: '50px',
+            fontSize: '40px',
             backgroundColor: '#9ab6bf',
             color: '#000000',
             align: 'center',
@@ -51,6 +51,11 @@ class Play extends Phaser.Scene {
 
         this.score = this.add.text(40, 40, distance + 'm', textConfig)
         this.score.setDepth(3)
+
+        textConfig.fontSize = '30px'
+        textConfig.padding = {top: 5, bottom: 5, left: 5, right: 5}
+        this.record = this.add.text(40, 120, 'Record: ' + highscore + 'm', textConfig)
+        this.record.setDepth(4)
 
         /*** Player Setup ***/
 
@@ -222,6 +227,10 @@ class Play extends Phaser.Scene {
 
         this.shipExplode(player)
         this.gameOver = true
+
+        if (distance > highscore) {
+            highscore = distance
+        }
     }
 
     shipExplode(player) {
