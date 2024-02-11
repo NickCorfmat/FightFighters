@@ -32,8 +32,15 @@ class Menu extends Phaser.Scene {
             frameHeight: 30
         })
 
+        this.load.spritesheet('warning', './assets/warning.png', {
+            frameWidth: 140,
+            frameHeight: 20
+        })
+
         // load audio
         this.load.audio('music', './assets/music.wav')
+        this.load.audio('western-standoff', './assets/western_standoff.wav')
+        this.load.audio('explosion', './assets/explosion.wav')
         
     }
 
@@ -42,7 +49,7 @@ class Menu extends Phaser.Scene {
 
         // background music
         if (!musicOn) {
-            this.backgroundMusic = this.sound.add('music', { loop: true })
+            this.backgroundMusic = this.sound.add('music', { loop: true , volume: 0.4})
             this.backgroundMusic.play()
             musicOn = true
         }
@@ -88,6 +95,9 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
+        if (this.backgroundMusic.isPaused) {
+            this.backgroundMusic.resume()
+        }
         // scroll background
         this.background.tilePositionX += 1
 
@@ -109,11 +119,13 @@ class Menu extends Phaser.Scene {
 
         // check for transition to instructions scene
         if (Phaser.Input.Keyboard.JustDown(keyI)) {
+            this.backgroundMusic.pause()
             this.scene.start('instructionScene')
         }
 
         // check for transition to credits scene
         if (Phaser.Input.Keyboard.JustDown(keyC)) {
+            this.backgroundMusic.pause()
             this.scene.start('creditScene')
         }
     }
