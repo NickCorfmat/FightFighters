@@ -2,7 +2,7 @@ class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene")
 
-        musicOn = true
+        musicOn = false
     }
 
     preload() {
