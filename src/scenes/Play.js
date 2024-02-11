@@ -9,7 +9,7 @@ class Play extends Phaser.Scene {
         this.walls = []
         this.trenches = []
         this.degrees = 0
-        this.pathWidth = 300
+        this.pathWidth
 
         this.xoff = 0
         this.seconds;
@@ -54,7 +54,11 @@ class Play extends Phaser.Scene {
         textConfig.fontSize = '30px'
         textConfig.padding = {top: 5, bottom: 5, left: 5, right: 5}
         this.record = this.add.text(40, 120, 'Record: ' + highscore + 'm', textConfig)
-        this.record.setDepth(4)
+        this.record.setDepth(3)
+
+        textConfig.fontSize = '20px'
+        this.pathText = this.add.text(40, 170, 'Canyon Width: 500ft', textConfig)
+        this.pathText.setDepth(3)
 
         /*** Player Setup ***/
 
@@ -208,9 +212,6 @@ class Play extends Phaser.Scene {
                 this.trenches.splice(i, 1)
             } 
         }
-
-        console.log(this.walls.length)
-        console.log(this.trenches.length)
     }
     }
 
@@ -224,6 +225,11 @@ class Play extends Phaser.Scene {
         }
 
         if (this.degrees % 3 == 0) {
+
+            // game difficulty function
+            this.pathWidth = 500000/(distance + 1000)
+            console.log(this.pathWidth)
+            this.pathText.text = 'Canyon Width: ' + Math.floor(this.pathWidth) + 'ft'
 
             // Perlin noise generation, courtesy of p5.js library
             this.x = map(noise(this.xoff), 0, 1, 0, width)
