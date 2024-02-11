@@ -10,9 +10,9 @@ class Instructions extends Phaser.Scene {
         // text config
         let textConfig = {
             fontFamily: '"Press Start 2P"',
-            fontSize: '42px',
+            fontSize: '30px',
             color: '#843605',
-            align: 'center',
+            align: 'left',
             lineSpacing: 15,
             fixedWidth: 0
         }
@@ -26,7 +26,8 @@ class Instructions extends Phaser.Scene {
         this.clouds.setAlpha(0.6)
 
         // instructions text
-        this.add.text(width/2, 5*height/11, 'Press SPACE to move right\nRELEASE to move left\nReturn to Menu (M)', textConfig).setOrigin(0.5)
+        this.add.text(width/4 + 100, height/2 - 50, 'Your mission, Captain:\nManeuver through increasingly\nchallenging terrain while\nstaying within the canyon\'s walls.', textConfig).setOrigin(0.5)
+        this.add.text(3*width/4, height/2 - 50, 'Controls:\nPress SPACE to accelerate right\nRELEASE to accelerate left\nReturn to Menu (M)', textConfig).setOrigin(0.5)
     }
 
     update() {

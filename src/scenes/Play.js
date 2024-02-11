@@ -42,7 +42,6 @@ class Play extends Phaser.Scene {
                 left: 15,
                 right: 15
             },
-            bold: true,
             lineSpacing: 10,
             fixedWidth: 0
         }
@@ -97,11 +96,51 @@ class Play extends Phaser.Scene {
         this.player.body.setImmovable(true)
         this.player.body.setCollideWorldBounds(true)
 
+        /*** Game Over Setup ***/
+
+        // game over animation
+        this.anims.create({
+            key: 'you-crashed',
+            frameRate: 2,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('crash', {
+                start: 0,
+                end: 1
+            })
+        })
+
+        // game over text
+        this.gameOverCard = this.add.sprite(width/2, height/2, 'gameover').setOrigin(0.5)
+        this.gameOverCard.setScale(4)
+        this.gameOverCard.setDepth(5)
+        this.gameOverCard.setAlpha(0)
+
+        this.crashText = this.add.sprite(width/2, height/3 + 50, 'crash').setOrigin(0.5)
+        this.crashText.setScale(4.5)
+        this.crashText.setDepth(6)
+        this.crashText.setAlpha(0)
+
+        this.gameOverOptions = this.add.text(width/2, height/2 + 100, 'Restart (R)\nMenu (M)', textConfig).setOrigin(0.5).setDepth(7)
+        this.gameOverOptions.setAlpha(0)
+
+        textConfig.fontSize = '40px'
+        this.gameOverScore = this.add.text(width/2, height/2, 'Score: ' + distance + 'm', textConfig).setOrigin(0.5).setDepth(7)
+        this.gameOverScore.setAlpha(0)
+
     }
 
     update() {
+        this.score.text = distance + 'm'
+        this.gameOverScore.text = 'Score: ' + distance + 'm'
 
         if (this.gameOver) {
+
+            this.crashText.play('you-crashed', true)
+            this.gameOverCard.setAlpha(1)
+            this.crashText.setAlpha(1)
+            this.gameOverScore.setAlpha(1)
+            this.gameOverOptions.setAlpha(1)
+
             if (Phaser.Input.Keyboard.JustDown(keyRESET)) {
                 this.scene.restart()
             }
@@ -122,7 +161,6 @@ class Play extends Phaser.Scene {
         /*** Scene Update ***/
 
         this.background.tilePositionY -= 2.5
-        this.score.text = distance + 'm'
 
         /*** Player Movement ***/
 
@@ -186,6 +224,8 @@ class Play extends Phaser.Scene {
         }
 
         if (this.degrees % 3 == 0) {
+
+            // Perlin noise generation, courtesy of p5.js library
             this.x = map(noise(this.xoff), 0, 1, 0, width)
 
             var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall').setOrigin(0.5)

@@ -1,6 +1,8 @@
 class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene")
+
+        musicOn = true
     }
 
     preload() {
@@ -12,6 +14,7 @@ class Menu extends Phaser.Scene {
         this.load.image('trench', './assets/trench.png')
         this.load.image('wall', './assets/wall.png')
         this.load.image('side-plane', './assets/plane_sideview.png')
+        this.load.image('gameover', './assets/gameover.png')
 
         // load spritesheets
         this.load.spritesheet('title', './assets/title.png', {
@@ -23,11 +26,26 @@ class Menu extends Phaser.Scene {
             frameWidth: 80,
             frameHeight: 120
         })
+
+        this.load.spritesheet('crash', './assets/crash.png', {
+            frameWidth: 120,
+            frameHeight: 30
+        })
+
+        // load audio
+        this.load.audio('music', './assets/music.wav')
         
     }
 
     create() {
         this.isTransitioning = false
+
+        // background music
+        if (!musicOn) {
+            this.backgroundMusic = this.sound.add('music', { loop: true })
+            this.backgroundMusic.play()
+            musicOn = true
+        }
 
         // text config
         let textConfig = {
@@ -83,7 +101,7 @@ class Menu extends Phaser.Scene {
         // check for transition to play scene
         if (Phaser.Input.Keyboard.JustDown(keySPACE) && !this.isTransitioning) {
             this.isTransitioning = true
-            this.cameras.main.fadeOut(0, 255, 255, 255)
+            this.cameras.main.fadeOut(1000, 255, 255, 255)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.scene.start('playScene')
             })
