@@ -133,6 +133,18 @@ class Load extends Phaser.Scene {
             })
         })
 
+        // text config
+        let textConfig = {
+            fontFamily: '"Press Start 2P"',
+            fontSize: '40px',
+            color: '#ffffff',
+            align: 'center',
+            fixedWidth: 0
+        }
+
+        // credits text
+        this.add.text(width/2, height/2, 'Loading...', textConfig, textConfig).setOrigin(0.5)
+
         // proceed once loading completes
         this.scene.start('menuScene')
     }
