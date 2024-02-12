@@ -89,7 +89,7 @@ class Load extends Phaser.Scene {
             })
         })
 
-        // game over animation
+        // game over animation config
         this.anims.create({
             key: 'you-crashed',
             frameRate: 2,
@@ -100,6 +100,7 @@ class Load extends Phaser.Scene {
             })
         })
 
+        // plane animation config
         this.anims.create({
             key: 'fly-straight',
             frameRate: 15,
@@ -110,6 +111,7 @@ class Load extends Phaser.Scene {
             })
         })
 
+        // tilt plane right animation config
         this.anims.create({
             key: 'fly-right',
             frameRate: 15,
@@ -120,6 +122,7 @@ class Load extends Phaser.Scene {
             })
         })
 
+        // tilt plane right animation config
         this.anims.create({
             key: 'fly-left',
             frameRate: 15,

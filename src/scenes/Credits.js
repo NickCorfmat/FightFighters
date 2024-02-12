@@ -4,12 +4,13 @@ class Credits extends Phaser.Scene {
     }
 
     create() {
+        // define keys
         keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
         // background
         this.add.sprite(0, 0, 'credits_background').setOrigin(0).setScale(4)
 
-        // train
+        // train animation
         this.train = this.add.sprite(-150, height-72, 'train').setOrigin(0.5).setScale(2)
         this.train.play('choo-choo')
 
@@ -38,6 +39,7 @@ class Credits extends Phaser.Scene {
             this.train.x += 1
         }
 
+        // check for transition to menu scene
         if (Phaser.Input.Keyboard.JustDown(keyM)) {
             exitSFX.play()
             this.scene.start('menuScene')

@@ -4,8 +4,8 @@ class Play extends Phaser.Scene {
     }
 
     init() {
+        // initializing variables
         distance = 0
-
         this.walls = []
         this.trenches = []
         this.degrees = 0
@@ -14,7 +14,6 @@ class Play extends Phaser.Scene {
         this.seconds;
         this.x = map(noise(this.xoff), 0, 1, 0, width)
         this.prevX = this.x
-
         this.collisionDetected = false
     }
 
@@ -46,23 +45,29 @@ class Play extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        // scrolling background
         this.background = this.add.tileSprite(0, 0, 600, 400, 'play_background').setOrigin(0).setScale(2)
 
+        // score text
         this.score = this.add.text(40, 40, distance + 'm', textConfig)
         this.score.setDepth(3)
 
+        // high score text
         textConfig.fontSize = '30px'
         textConfig.padding = {top: 5, bottom: 5, left: 5, right: 5}
         this.record = this.add.text(40, 120, 'Record: ' + highscore + 'm', textConfig)
         this.record.setDepth(3)
 
+        // canyon width text
         textConfig.fontSize = '20px'
         this.pathText = this.add.text(40, 170, 'Canyon Width: 500ft', textConfig)
         this.pathText.setDepth(3)
 
+        // 'Canyon Ahead' animation setup
         this.canyonAhead = this.add.sprite(width/2 + 30, 2*height/5, 'warning').setOrigin(0.5).setScale(5).setDepth(5)
         this.canyonAhead.play('canyon-ahead', true)
 
+        // game over sfx
         this.gameOverSFX = this.sound.add('game-over', { loop: false , volume: 1.5})
 
         /*** Player Setup ***/
@@ -97,17 +102,19 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // update score text
         this.score.text = distance + 'm'
         this.gameOverScore.text = 'Score: ' + distance + 'm'
 
         if (this.gameOver) {
-
+            // game over screen
             this.crashText.play('you-crashed', true)
             this.gameOverCard.setAlpha(1)
             this.crashText.setAlpha(1)
             this.gameOverScore.setAlpha(1)
             this.gameOverOptions.setAlpha(1)
 
+            // restart round
             if (Phaser.Input.Keyboard.JustDown(keyRESET)) {
                 this.gameOverSFX.stop()
                 enterSFX.play()
@@ -115,6 +122,7 @@ class Play extends Phaser.Scene {
                 this.scene.restart()
             }
 
+            // check for transition to menu scene
             if (Phaser.Input.Keyboard.JustDown(keyM)) {
                 this.gameOverSFX.stop()
                 exitSFX.play()
@@ -122,18 +130,12 @@ class Play extends Phaser.Scene {
                 this.scene.start("menuScene")
             }
         } else {
-
             // scroll background
             this.background.tilePositionY -= 2.5
 
-            // update player
-            this.player.update()
-
-            // generate random terrain using perlin noise
-            this.generateTerrain()
-
-            // update borders
-            this.updateTerrain()
+            this.player.update()    // update player
+            this.generateTerrain()  // generate random terrain using perlin noise
+            this.updateTerrain()    // update border locations
         }
     }
 
@@ -146,6 +148,7 @@ class Play extends Phaser.Scene {
             this.xoff += 0.02
         }
 
+        // generate terrain
         if (this.degrees % 3 == 0) {
 
             // game difficulty function
@@ -155,6 +158,7 @@ class Play extends Phaser.Scene {
             // Perlin noise generation, courtesy of p5.js library
             this.x = map(noise(this.xoff), 0, 1, 0, width)
 
+            // generate invisible left and right border
             var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall')
             var rightWall = new Wall(this, this.x + this.pathWidth, -100, 'wall')
 
@@ -164,9 +168,10 @@ class Play extends Phaser.Scene {
             this.walls.push(leftWall)
             this.walls.push(rightWall)
 
+            // generate trench sprite
             let t = this.add.sprite(this.x, -100, 'trench').setOrigin(0.5)
             t.displayWidth = this.pathWidth*2
-            t.flipX = this.x >= this.prevX ? false : true
+            t.flipX = this.x >= this.prevX ? false : true // flip sprite according to pos/neg x shift
             this.trenches.push(t)
 
             this.prevX = this.x
@@ -177,6 +182,7 @@ class Play extends Phaser.Scene {
 
     handleCollision(player, wall) {
         if (!this.collisionDetected) {
+            // stop player
             this.player.body.setAccelerationX(0)
             this.player.body.setVelocityX(0)
 
@@ -185,6 +191,7 @@ class Play extends Phaser.Scene {
             backgroundMusic.pause()
             this.gameOverSFX.play()
 
+            // update high score
             if (distance > highscore) {
                 highscore = distance
             }
@@ -216,11 +223,12 @@ class Play extends Phaser.Scene {
     }
 
     updateTerrain() {
-
         // update border positions
         for (var i = 0; i < this.walls.length; i++) {
             var w = this.walls[i]
             w.update()
+
+            // destroy out of world sprites
             if (w.y > 960) {
                 w.destroy()
                 this.walls.splice(i, 1)
@@ -232,10 +240,12 @@ class Play extends Phaser.Scene {
             var t = this.trenches[i]
             t.y += 5
 
+            // update distance score
             if (t.y == this.player.y) {
                 distance += 1
             }
 
+            // destroy out of world sprites
             if (t.y > 960) {
                 t.destroy()
                 this.trenches.splice(i, 1)
@@ -244,6 +254,7 @@ class Play extends Phaser.Scene {
     }
 }
 
+// p5.js support for perlin noise functions
 function setup() {
     createCanvas(0, 0)
     frameRate(1)

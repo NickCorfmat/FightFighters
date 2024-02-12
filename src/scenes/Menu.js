@@ -10,13 +10,14 @@ class Menu extends Phaser.Scene {
 
         // background music
         if (!musicOn) {
-            backgroundMusic = this.sound.add('music', { loop: true , volume: 0.9})
+            backgroundMusic = this.sound.add('music', { loop: true , volume: 0.5})
             backgroundMusic.play()
             musicOn = true
         }
 
+        // initialize button select SFX
         enterSFX = this.sound.add('enter', { loop: false, volume: 0.5 })
-        exitSFX = this.sound.add('exit', { loop: false, volume: 1 })
+        exitSFX = this.sound.add('exit', { loop: false, volume: 2 })
 
         // text config
         let textConfig = {
@@ -48,6 +49,7 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
+        // resume music if paused
         if (backgroundMusic.isPaused) {
             backgroundMusic.resume()
         }
