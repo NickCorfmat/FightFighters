@@ -109,7 +109,7 @@ class Play extends Phaser.Scene {
         if (this.gameOver) {
             // game over screen
             this.crashText.play('you-crashed', true)
-            this.gameOverCard.setAlpha(0.7)
+            this.gameOverCard.setAlpha(1)
             this.crashText.setAlpha(1)
             this.gameOverScore.setAlpha(1)
             this.gameOverOptions.setAlpha(1)
