@@ -5,55 +5,18 @@ class Menu extends Phaser.Scene {
         musicOn = false
     }
 
-    preload() {
-        // load images
-        this.load.image('menu_background', './assets/menu_background.png')
-        this.load.image('play_background', './assets/play_background.png')
-        this.load.image('instructions_background', './assets/instructions_background.png')
-        this.load.image('clouds', './assets/clouds.png')
-        this.load.image('trench', './assets/trench.png')
-        this.load.image('wall', './assets/wall.png')
-        this.load.image('side-plane', './assets/plane_sideview.png')
-        this.load.image('gameover', './assets/gameover.png')
-        this.load.image('flames', './assets/explosion.png')
-
-        // load spritesheets
-        this.load.spritesheet('title', './assets/title.png', {
-            frameWidth: 110,
-            frameHeight: 40
-        })
-
-        this.load.spritesheet('player', './assets/plane.png', {
-            frameWidth: 80,
-            frameHeight: 120
-        })
-
-        this.load.spritesheet('crash', './assets/crash.png', {
-            frameWidth: 120,
-            frameHeight: 30
-        })
-
-        this.load.spritesheet('warning', './assets/warning.png', {
-            frameWidth: 140,
-            frameHeight: 20
-        })
-
-        // load audio
-        this.load.audio('music', './assets/music.wav')
-        this.load.audio('western-standoff', './assets/western_standoff.wav')
-        this.load.audio('explosion', './assets/explosion.wav')
-        
-    }
-
     create() {
         this.isTransitioning = false
 
         // background music
         if (!musicOn) {
-            this.backgroundMusic = this.sound.add('music', { loop: true , volume: 0.4})
-            this.backgroundMusic.play()
+            backgroundMusic = this.sound.add('music', { loop: true , volume: 0.9})
+            backgroundMusic.play()
             musicOn = true
         }
+
+        enterSFX = this.sound.add('enter', { loop: false, volume: 0.5 })
+        exitSFX = this.sound.add('exit', { loop: false, volume: 1 })
 
         // text config
         let textConfig = {
@@ -64,17 +27,6 @@ class Menu extends Phaser.Scene {
             lineSpacing: 10,
             fixedWidth: 0
         }
-
-        // title animation config
-        this.anims.create({
-            key: 'gameTitle',
-            frameRate: 2,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('title', {
-                start: 0,
-                end: 1
-            })
-        })
 
         // define keys
         keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
@@ -96,8 +48,8 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
-        if (this.backgroundMusic.isPaused) {
-            this.backgroundMusic.resume()
+        if (backgroundMusic.isPaused) {
+            backgroundMusic.resume()
         }
         // scroll background
         this.background.tilePositionX += 1
@@ -111,6 +63,7 @@ class Menu extends Phaser.Scene {
 
         // check for transition to play scene
         if (Phaser.Input.Keyboard.JustDown(keySPACE) && !this.isTransitioning) {
+            enterSFX.play()
             this.isTransitioning = true
             this.cameras.main.fadeOut(1000, 255, 255, 255)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
@@ -120,13 +73,15 @@ class Menu extends Phaser.Scene {
 
         // check for transition to instructions scene
         if (Phaser.Input.Keyboard.JustDown(keyI)) {
-            this.backgroundMusic.pause()
+            enterSFX.play()
+            backgroundMusic.pause()
             this.scene.start('instructionScene')
         }
 
         // check for transition to credits scene
         if (Phaser.Input.Keyboard.JustDown(keyC)) {
-            this.backgroundMusic.pause()
+            enterSFX.play()
+            backgroundMusic.pause()
             this.scene.start('creditScene')
         }
     }
