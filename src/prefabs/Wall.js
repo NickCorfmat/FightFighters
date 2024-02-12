@@ -5,6 +5,11 @@ class Wall extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this)            // add to existing, displayList, updateList
         scene.physics.add.existing(this)    // add physics
+        
+        this.setOrigin(0.5)
+        this.body.setSize(5, 20)
+        this.body.setImmovable(true)
+        this.alpha = 0
     }
 
     update() {
