@@ -17,7 +17,7 @@ class Instructions extends Phaser.Scene {
             fixedWidth: 0
         }
 
-        // audio theme
+        // audio
         this.openingTheme = this.sound.add('western-standoff', { loop: false})
         this.openingTheme.play()
 
@@ -40,6 +40,7 @@ class Instructions extends Phaser.Scene {
 
         // check for transition to menu scene
         if (Phaser.Input.Keyboard.JustDown(keyM)) {
+            exitSFX.play()
             this.scene.start('menuScene')
             this.openingTheme.stop()
         }

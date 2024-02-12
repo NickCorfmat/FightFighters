@@ -14,6 +14,8 @@ class Play extends Phaser.Scene {
         this.seconds;
         this.x = map(noise(this.xoff), 0, 1, 0, width)
         this.prevX = this.x
+
+        this.collisionDetected = false
     }
 
     create() {
@@ -58,74 +60,17 @@ class Play extends Phaser.Scene {
         this.pathText = this.add.text(40, 170, 'Canyon Width: 500ft', textConfig)
         this.pathText.setDepth(3)
 
-        // 'canyon ahead' animation config
-        this.anims.create({
-            key: 'canyon-ahead',
-            frameRate: 4,
-            repeat: 5,
-            duration: 2000,
-            hideOnComplete: true,
-            frames: this.anims.generateFrameNumbers('warning', {
-                start: 0,
-                end: 1
-            })
-        })
-
         this.canyonAhead = this.add.sprite(width/2 + 30, 2*height/5, 'warning').setOrigin(0.5).setScale(5).setDepth(5)
         this.canyonAhead.play('canyon-ahead', true)
 
+        this.gameOverSFX = this.sound.add('game-over', { loop: false , volume: 1.5})
+
         /*** Player Setup ***/
 
-        // plane animation config
-        this.anims.create({
-            key: 'fly-straight',
-            frameRate: 15,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('player', {
-                start: 0,
-                end: 3
-            })
-        })
-
-        this.anims.create({
-            key: 'fly-right',
-            frameRate: 15,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('player', {
-                start: 4,
-                end: 5
-            })
-        })
-
-        this.anims.create({
-            key: 'fly-left',
-            frameRate: 15,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('player', {
-                start: 6,
-                end: 7
-            })
-        })
-
         // player character initialization
-        this.player = new Player(this, this.x, height-120, 'player').setOrigin(0.5, 0.5)
-        this.player.setScale(1.4)
-        this.player.body.setCircle(25, 15, 40)
-        this.player.body.setImmovable(true)
-        this.player.body.setCollideWorldBounds(true)
+        this.player = new Player(this, this.x, height-120, 'player')
 
         /*** Game Over Setup ***/
-
-        // game over animation
-        this.anims.create({
-            key: 'you-crashed',
-            frameRate: 2,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('crash', {
-                start: 0,
-                end: 1
-            })
-        })
 
         // game over text
         this.gameOverCard = this.add.sprite(width/2, height/2, 'gameover').setOrigin(0.5)
@@ -148,7 +93,7 @@ class Play extends Phaser.Scene {
         this.gameOverScore.setAlpha(0)
 
         // explosion sound
-        this.explosion = this.sound.add('explosion', { loop: false, volume: 0.4})
+        this.explosionSFX = this.sound.add('explosion', { loop: false, volume: 0.45})
     }
 
     update() {
@@ -164,64 +109,31 @@ class Play extends Phaser.Scene {
             this.gameOverOptions.setAlpha(1)
 
             if (Phaser.Input.Keyboard.JustDown(keyRESET)) {
+                this.gameOverSFX.stop()
+                enterSFX.play()
+                backgroundMusic.resume()
                 this.scene.restart()
             }
 
             if (Phaser.Input.Keyboard.JustDown(keyM)) {
+                this.gameOverSFX.stop()
+                exitSFX.play()
+                backgroundMusic.resume()
                 this.scene.start("menuScene")
             }
         } else {
 
-            /*** Scene Update ***/
-
+            // scroll background
             this.background.tilePositionY -= 2.5
 
-            /*** Player Movement ***/
-
-            if (this.player.body.velocity.x >= 150) {
-                this.player.play('fly-right', true)
-            } else if (this.player.body.velocity.x <= -150) {
-                this.player.play('fly-left', true)
-            } else {
-                this.player.play('fly-straight', true)
-            }
-
-            // left/right
-            if (keySPACE.isDown) {
-                this.player.body.setAccelerationX(1200)
-            } else {
-                this.player.body.setAccelerationX(-600)
-            }
-
-            /*** Path Generation ***/
+            // update player
+            this.player.update()
 
             // generate random terrain using perlin noise
             this.generateTerrain()
 
             // update borders
-            for (var i = 0; i < this.walls.length; i++) {
-                var w = this.walls[i]
-                w.update()
-                if (w.y > 960) {
-                    w.destroy()
-                    this.walls.splice(i, 1)
-                } 
-            }
-
-            // update trench sprite and update score
-            for (var i = 0; i < this.trenches.length; i++) {
-                var t = this.trenches[i]
-                t.y += 5
-
-                if (t.y == this.player.y) {
-                    distance += 1
-                }
-
-                if (t.y > 960) {
-                    t.destroy()
-                    this.trenches.splice(i, 1)
-                } 
-            }
+            this.updateTerrain()
         }
     }
 
@@ -243,17 +155,8 @@ class Play extends Phaser.Scene {
             // Perlin noise generation, courtesy of p5.js library
             this.x = map(noise(this.xoff), 0, 1, 0, width)
 
-            var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall').setOrigin(0.5)
-            var rightWall = new Wall(this, this.x + this.pathWidth, -100, 'wall').setOrigin(0.5)
-
-            leftWall.alpha = 0
-            rightWall.alpha = 0
-
-            leftWall.body.setSize(5, 20)
-            rightWall.body.setSize(5, 20)
-
-            leftWall.body.setImmovable(true)
-            rightWall.body.setImmovable(true)
+            var leftWall = new Wall(this, this.x - this.pathWidth, -100, 'wall')
+            var rightWall = new Wall(this, this.x + this.pathWidth, -100, 'wall')
 
             this.physics.add.collider(this.player, leftWall, this.handleCollision, null, this)
             this.physics.add.collider(this.player, rightWall, this.handleCollision, null, this)
@@ -272,20 +175,72 @@ class Play extends Phaser.Scene {
         this.degrees++
     }
 
-    handleCollision(player, edge) {
-        this.player.body.setAccelerationX(0)
-        this.player.body.setVelocityX(0)
+    handleCollision(player, wall) {
+        if (!this.collisionDetected) {
+            this.player.body.setAccelerationX(0)
+            this.player.body.setVelocityX(0)
 
-        this.shipExplode(player)
-        this.gameOver = true
+            this.shipExplode(player)
+            this.gameOver = true
+            backgroundMusic.pause()
+            this.gameOverSFX.play()
 
-        if (distance > highscore) {
-            highscore = distance
+            if (distance > highscore) {
+                highscore = distance
+            }
+
+            this.collisionDetected = true
         }
     }
 
     shipExplode(player) {
+        // hide plane
+        player.setAlpha(0)
 
+        // create explosion particles at player's position
+        this.explosion = this.add.particles(player.x, player.y, 'flames', {
+            speed: 100,
+            accelerationX: Phaser.Math.Between(-500, 500),
+            accelerationY: Phaser.Math.Between(-500, 500),
+            alpha: 0.2,
+            lifespan: 1200,
+            blendMode: 'ADD',
+            scale: { start: 2, end: 0 },
+            duration: 1000,
+        });
+
+        this.explosion.setDepth(4)
+
+        // play explosion SFX
+        this.explosionSFX.play()
+    }
+
+    updateTerrain() {
+
+        // update border positions
+        for (var i = 0; i < this.walls.length; i++) {
+            var w = this.walls[i]
+            w.update()
+            if (w.y > 960) {
+                w.destroy()
+                this.walls.splice(i, 1)
+            } 
+        }
+
+        // update trench sprite and update score
+        for (var i = 0; i < this.trenches.length; i++) {
+            var t = this.trenches[i]
+            t.y += 5
+
+            if (t.y == this.player.y) {
+                distance += 1
+            }
+
+            if (t.y > 960) {
+                t.destroy()
+                this.trenches.splice(i, 1)
+            } 
+        }
     }
 }
 
