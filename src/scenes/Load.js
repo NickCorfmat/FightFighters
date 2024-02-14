@@ -18,14 +18,12 @@ class Load extends Phaser.Scene {
         this.load.image('gameover', './assets/gameover.png')
         this.load.image('flames', './assets/explosion.png')
 
+        // load texture atlas
+        this.load.atlas('train', './assets/train.png', './assets/sprites.json')
+
         // load spritesheets
         this.load.spritesheet('title', './assets/title.png', {
             frameWidth: 110,
-            frameHeight: 40
-        })
-
-        this.load.spritesheet('train', './assets/train.png', {
-            frameWidth: 150,
             frameHeight: 40
         })
 
@@ -54,6 +52,18 @@ class Load extends Phaser.Scene {
     }
 
     create() {
+        // train animation config
+        this.anims.create({
+            key: 'choo-choo',
+            frameRate: 8,
+            frames: this.anims.generateFrameNames('train', {
+                prefix: "sprite",
+                start: 1,
+                end: 10
+            }),
+            repeat: -1
+        })
+
         // title animation config
         this.anims.create({
             key: 'gameTitle',
@@ -62,17 +72,6 @@ class Load extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('title', {
                 start: 0,
                 end: 1
-            })
-        })
-
-        // train animation config
-        this.anims.create({
-            key: 'choo-choo',
-            frameRate: 8,
-            repeat: -1,
-            frames: this.anims.generateFrameNumbers('train', {
-                start: 0,
-                end: 9
             })
         })
 
