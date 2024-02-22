@@ -26,8 +26,3 @@ let game = new Phaser.Game(config)
 
 // define globals
 let { height, width } = game.config
-
-// reserve keyboard bindings
-let keyLEFT, keyRIGHT, keyUP, keyDOWN
-let keyENTER
-let keyR
