@@ -1,35 +1,22 @@
-// Rumble prefab
-class Rumble extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame) {
-        super(scene, x, y, texture, frame) // call Sprite parent class
+// Rumble McSkirmish prefab
+class Rumble extends Fighter {
+    constructor(scene, x, y, texture, frame, direction, health, speed) {
+        super(scene, x, y, texture, frame, direction, health, speed)
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
+        scene.add.sprite(x, y, 'Rumble').setOrigin(0, 1).setScale(0.9)
 
-        // initialize state machine managing hero (initial state, possible states, state args[])
+        // initialize state machine managing fighter (initial state, possible states, state args[])
         scene.rumbleFSM = new StateMachine('idle', {
             idle: new IdleState(),
-            move: new MoveState(),
+            walk: new MoveState(),
+            jump: new JumpState(),
             punch: new PunchState(),
             kick: new KickState(),
-            fireball: new FireballState(),
-        }, [scene, this])   // pass these as arguments to maintain scene/object context in the FSM
+            fireball: new SpecialState(),
+            hurt: new HurtState(),
+            death: new DeathState()
+        }, [scene, this])
     }
-}
-
-class IdleState extends State {
-
-}
-
-class MoveState extends State {
-
-}
-
-class PunchState extends State {
-
-}
-
-class KickState extends State {
-    
-}
-
-class FireballState extends State {
 
 }
