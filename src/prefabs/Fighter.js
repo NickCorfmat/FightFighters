@@ -4,72 +4,32 @@ class Fighter extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture, frame)
         scene.add.existing(this)
         scene.physics.add.existing(this)
-
-        this.body.setSize(300, 500)
+        
+        this.body.setGravityY(2500)
         this.body.setCollideWorldBounds(true)
 
         // set custom fighter properties
-        this.direction = direction
+        this.direction = direction >= 0 ? 'right' : 'left'
         this.health = health
         this.fighterVelocity = speed
 
     }
 }
 
-class IdleState extends State {
-    enter(scene, fighter) {
+class IdleState extends State { }
 
-    }
+class MoveState extends State { }
 
-    execute(scene, fighter) {
-        const { left, right, up, down } = scene.keys
+class CrouchState extends State { }
 
-        // transitions: move, jump, punch, kick, fireball, hurt, death
-    }
-}
+class JumpState extends State { }
 
-class MoveState extends State {
-    execute(scene, fighter) {
-        const { left, right, up, down } = scene.keys
+class PunchState extends State { }
 
-        // transitions: idle, jump, punch, kick, fireball, hurt, death
-        // handling: move left, right
-    }
-}
+class KickState extends State { }
 
-class JumpState extends State {
-    enter(scene, fighter) {
-        // transitions: idle, move, punch, kick, fireball, hurt, death
-        // handling: move left, right
-    }
-}
+class SpecialState extends State { }
 
-class PunchState extends State {
-    enter(scene, fighter) {
+class HurtState extends State { }
 
-    }
-}
-
-class KickState extends State {
-    enter(scene, fighter) {
-
-    }
-}
-
-class SpecialState extends State {
-    enter(scene, fighter) {
-
-    }
-}
-
-class HurtState extends State {
-    enter(scene, fighter) {
-
-    }
-}
-
-class DeathState extends State {
-    enter(scene, fighter) {
-
-    }
-}
+class DeathState extends State { }

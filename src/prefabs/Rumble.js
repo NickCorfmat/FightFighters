@@ -6,38 +6,53 @@ class Rumble extends Fighter {
         this.punchCooldown = 150
         this.kickCooldown = 500
         this.specialCooldown = 1500
-        this.hurtCooldown = 250
+
+        this.jumpTimer = 600
+        this.crouchTimer = 100
+        this.hurtTimer = 250
+
+        console.log('rumble created')
         
         // initialize state machine managing fighter (initial state, possible states, state args[])
         scene.rumbleFSM = new StateMachine('idle', {
-            idle: new IdleState(),
-            move: new MoveState(),
-            jump: new JumpState(),
-            punch: new PunchState(),
-            kick: new KickState(),
-            fireball: new SpecialState(),
-            hurt: new HurtState(),
-            death: new DeathState()
+            idle: new RumbleIdleState(),
+            move: new RumbleMoveState(),
+            crouch: new RumbleCrouchState(),
+            jump: new RumbleJumpState(),
+            punch: new RumblePunchState(),
+            kick: new RumbleKickState(),
+            fireball: new RumbleSpecialState(),
+            hurt: new RumbleHurtState(),
+            death: new RumbleDeathState()
         }, [scene, this])
     }
 }
 
-class IdleState extends State {
+class RumbleIdleState extends IdleState {
     enter(scene, fighter) {
         fighter.setVelocity(0)
+        fighter.anims.play('sticky-idle')
+        fighter.anims.stop()
     }
 
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: none
 
-        const WKey = scene.keys.WKey
-        const AKey = scene.keys.AKey
-        const DKey = scene.keys.DKey
+        const WKey = scene.keys.keyW
+        const AKey = scene.keys.keyA
+        const SKey = scene.keys.keyS
+        const DKey = scene.keys.keyD
 
-        const CKey = scene.keys.CKey
-        const VKey = scene.keys.VKey
-        const BKey = scene.keys.BKey
+        const CKey = scene.keys.keyC
+        const VKey = scene.keys.keyV
+        const BKey = scene.keys.keyB
+
+        // transition to crouch if pressing S key
+        if(Phaser.Input.Keyboard.JustDown(SKey)) {
+            this.stateMachine.transition('crouch')
+            return
+        }
 
         // transition to jump if pressing W key
         if(Phaser.Input.Keyboard.JustDown(WKey)) {
@@ -71,18 +86,19 @@ class IdleState extends State {
     }
 }
 
-class MoveState extends State {
+class RumbleMoveState extends MoveState {
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
 
-        const WKey = scene.keys.WKey
-        const AKey = scene.keys.AKey
-        const DKey = scene.keys.DKey
+        const WKey = scene.keys.keyW
+        const AKey = scene.keys.keyA
+        const SKey = scene.keys.keyS
+        const DKey = scene.keys.keyD
 
-        const CKey = scene.keys.CKey
-        const VKey = scene.keys.VKey
-        const BKey = scene.keys.BKey
+        const CKey = scene.keys.keyC
+        const VKey = scene.keys.keyV
+        const BKey = scene.keys.keyB
 
         // transition to jump if pressing W key
         if(Phaser.Input.Keyboard.JustDown(WKey)) {
@@ -126,21 +142,43 @@ class MoveState extends State {
         
         // update fighter position and play proper animation
         fighter.setVelocityX(fighter.fighterVelocity * moveDirectionX)
-        fighter.anims.play(`walk-${fighter.direction}`, true)
+        fighter.anims.play('sticky-walk', true)
     }
 }
 
-class JumpState extends State {
+class RumbleCrouchState extends CrouchState {
     enter(scene, fighter) {
+        fighter.setVelocity(0)
+        fighter.anims.play('sticky-crouch')
+        scene.time.delayedCall(fighter.crouchTimer, () => {
+            this.stateMachine.transition('idle')
+        })
+    }
+}
+
+class RumbleJumpState extends JumpState {
+    enter(scene, fighter) {
+        // update fighter position and play proper animation
+        fighter.setVelocityY(-800)
+        fighter.anims.play('sticky-jump', true)
+
+        scene.time.delayedCall(fighter.jumpTimer, () => {
+            this.stateMachine.transition('idle')
+        })
+    }
+
+    execute(scene, fighter) {
         // transitions: idle, move, punch, kick, fireball, hurt, death
         // handling: vertical jump
 
-        const AKey = scene.keys.AKey
-        const DKey = scene.keys.DKey
+        const WKey = scene.keys.keyW
+        const AKey = scene.keys.keyA
+        const SKey = scene.keys.keyS
+        const DKey = scene.keys.keyD
 
-        const CKey = scene.keys.CKey
-        const VKey = scene.keys.VKey
-        const BKey = scene.keys.BKey
+        const CKey = scene.keys.keyC
+        const VKey = scene.keys.keyV
+        const BKey = scene.keys.keyB
 
         // transition to move if pressing a movement key
         if(AKey.isDown || DKey.isDown) {
@@ -165,26 +203,22 @@ class JumpState extends State {
             this.stateMachine.transition('fireball')
             return
         }
-
-        // update fighter position and play proper animation
-        fighter.setVelocityY(500)
-        fighter.anims.play('jump', true)
     }
 }
 
-class PunchState extends State {
+class RumblePunchState extends PunchState {
     enter(scene, fighter) {
         // transitions: idle
         // handling: punch attack
 
         fighter.setVelocity(0)
-        fighter.anims.play(`punch-${fighter.direction}`)
-        switch(fighter.direction) {
-            case 'left':
-                break
-            case 'right':
-                break
-        }
+        fighter.anims.play('sticky-punch')
+        // switch(fighter.direction) {
+        //     case 'left':
+        //         break
+        //     case 'right':
+        //         break
+        // }
 
         // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.punchCooldown, () => {
@@ -193,19 +227,19 @@ class PunchState extends State {
     }
 }
 
-class KickState extends State {
+class RumbleKickState extends KickState {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
 
         fighter.setVelocity(0)
-        fighter.anims.play(`kick-${fighter.direction}`)
-        switch(fighter.direction) {
-            case 'left':
-                break
-            case 'right':
-                break
-        }
+        fighter.anims.play('sticky-kick')
+        // switch(fighter.direction) {
+        //     case 'left':
+        //         break
+        //     case 'right':
+        //         break
+        // }
 
         // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.kickCooldown, () => {
@@ -214,19 +248,19 @@ class KickState extends State {
     }
 }
 
-class SpecialState extends State {
+class RumbleSpecialState extends SpecialState {
     enter(scene, fighter) {
         // transitions: idle
         // handling: special fireball attack
 
         fighter.setVelocity(0)
-        fighter.anims.play(`fireball-${fighter.direction}`)
-        switch(fighter.direction) {
-            case 'left':
-                break
-            case 'right':
-                break
-        }
+        fighter.anims.play('sticky-special')
+        // switch(fighter.direction) {
+        //     case 'left':
+        //         break
+        //     case 'right':
+        //         break
+        // }
 
         // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.specialCooldown, () => {
@@ -235,7 +269,7 @@ class SpecialState extends State {
     }
 }
 
-class HurtState extends State {
+class RumbleHurtState extends HurtState {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play(`walk-${fighter.direction}`)
@@ -259,7 +293,7 @@ class HurtState extends State {
     }
 }
 
-class DeathState extends State {
+class RumbleDeathState extends DeathState {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play(`die-${fighter.direction}`)
