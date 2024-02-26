@@ -1,15 +1,27 @@
 // Rumble McSkirmish prefab
-class Rumble extends Fighter {
+class Rumble extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, health, speed) {
-        super(scene, x, y, texture, frame, direction, health, speed)
+        super(scene, x, y, texture, frame)
+        scene.add.existing(this.setOrigin(0, 1))
+        scene.physics.add.existing(this.setOrigin(0, 1))
+
+        this.body.setGravityY(2000)
+        this.body.setCollideWorldBounds(true)
+
+        // set custom fighter properties
+        this.direction = direction >= 0 ? 'right' : 'left'
+        this.HP = health
+        this.fighterVelocity = speed
 
         this.punchCooldown = 150
         this.kickCooldown = 500
         this.specialCooldown = 1500
 
-        this.jumpTimer = 600
-        this.crouchTimer = 100
+        this.jumpTimer = 1000
+        this.crouchTimer = 200
         this.hurtTimer = 250
+
+        this.healthBar = new HealthBar(scene, 160, 110)
 
         console.log('rumble created')
         
@@ -28,16 +40,19 @@ class Rumble extends Fighter {
     }
 }
 
-class RumbleIdleState extends IdleState {
+class RumbleIdleState extends State {
     enter(scene, fighter) {
+        console.log('idle state')
         fighter.setVelocity(0)
-        fighter.anims.play('sticky-idle')
+        fighter.anims.play(`sticky-idle-${fighter.direction}`)
         fighter.anims.stop()
     }
 
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: none
+
+        //console.log(this.y)
 
         const WKey = scene.keys.keyW
         const AKey = scene.keys.keyA
@@ -86,7 +101,10 @@ class RumbleIdleState extends IdleState {
     }
 }
 
-class RumbleMoveState extends MoveState {
+class RumbleMoveState extends State {
+    enter() {
+        console.log('move state')
+    }
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
@@ -142,27 +160,28 @@ class RumbleMoveState extends MoveState {
         
         // update fighter position and play proper animation
         fighter.setVelocityX(fighter.fighterVelocity * moveDirectionX)
-        fighter.anims.play('sticky-walk', true)
+        fighter.anims.play(`sticky-walk-${fighter.direction}`, true)
     }
 }
 
-class RumbleCrouchState extends CrouchState {
+class RumbleCrouchState extends State {
     enter(scene, fighter) {
+        console.log('crouch state')
         fighter.setVelocity(0)
-        fighter.anims.play('sticky-crouch')
+        fighter.anims.play(`sticky-crouch-${fighter.direction}`)
         scene.time.delayedCall(fighter.crouchTimer, () => {
             this.stateMachine.transition('idle')
         })
     }
 }
 
-class RumbleJumpState extends JumpState {
+class RumbleJumpState extends State {
     enter(scene, fighter) {
+        console.log('jump state')
         // update fighter position and play proper animation
         fighter.setVelocityY(-800)
-        fighter.anims.play('sticky-jump', true)
-
-        scene.time.delayedCall(fighter.jumpTimer, () => {
+        fighter.anims.play(`sticky-jump-${fighter.direction}`, true)
+        fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
     }
@@ -206,13 +225,14 @@ class RumbleJumpState extends JumpState {
     }
 }
 
-class RumblePunchState extends PunchState {
+class RumblePunchState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: punch attack
 
+        console.log('punch state')
         fighter.setVelocity(0)
-        fighter.anims.play('sticky-punch')
+        fighter.anims.play(`sticky-punch-${fighter.direction}`)
         // switch(fighter.direction) {
         //     case 'left':
         //         break
@@ -227,13 +247,14 @@ class RumblePunchState extends PunchState {
     }
 }
 
-class RumbleKickState extends KickState {
+class RumbleKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
 
+        console.log('kick state')
         fighter.setVelocity(0)
-        fighter.anims.play('sticky-kick')
+        fighter.anims.play(`sticky-kick-${fighter.direction}`)
         // switch(fighter.direction) {
         //     case 'left':
         //         break
@@ -248,13 +269,14 @@ class RumbleKickState extends KickState {
     }
 }
 
-class RumbleSpecialState extends SpecialState {
+class RumbleSpecialState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: special fireball attack
 
+        console.log('special state')
         fighter.setVelocity(0)
-        fighter.anims.play('sticky-special')
+        fighter.anims.play(`sticky-special-${fighter.direction}`)
         // switch(fighter.direction) {
         //     case 'left':
         //         break
@@ -269,7 +291,7 @@ class RumbleSpecialState extends SpecialState {
     }
 }
 
-class RumbleHurtState extends HurtState {
+class RumbleHurtState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play(`walk-${fighter.direction}`)
@@ -293,7 +315,7 @@ class RumbleHurtState extends HurtState {
     }
 }
 
-class RumbleDeathState extends DeathState {
+class RumbleDeathState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play(`die-${fighter.direction}`)
