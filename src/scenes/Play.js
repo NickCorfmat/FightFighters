@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     init() {
-
+        this.gameStart = false
     }
 
     create() {
@@ -18,9 +18,11 @@ class Play extends Phaser.Scene {
         // this.player = this.physics.add.sprite(0,0,'sticky').setOrigin(0)
         // this.player.body.setGravityY(2500)
         // this.player.body.setCollideWorldBounds(true)
-        this.player1 = new Rumble(this, 200, 400, 'sticky', 0, 'right', 100, 500)
-        this.player2 = new DrKarate(this, 900, 400, 'sticky', 0, 'left', 100, 500)
-        //this.player2 = new DrKarate(this, 200, 150, 'karate', 0, 'left', 100)
+        this.player1 = new Rumble(this, 375, 600, 'sticky', 0, 'right', 100, 500)
+        this.player2 = new DrKarate(this, 825, 700, 'dr-karate-play', 0, 'left', 100, 500)
+
+        this.add.sprite(148, 165, 'rumble-play-text').setOrigin(0).setScale(1.75)
+        this.add.sprite(790, 165, 'karate-play-text').setOrigin(0).setScale(1.75)
 
         // player 2 keyboard input
         this.keys = this.input.keyboard.createCursorKeys()
@@ -38,8 +40,14 @@ class Play extends Phaser.Scene {
         this.keys.Enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
         this.keys.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
 
-        //this.add.line(0, 0, 600, 0, 600, 1600, 0x000000);
+        this.fight = this.add.sprite(width/2, height/2, 'FIGHT').setOrigin(0.5).setScale(5)
 
+        this.time.delayedCall(1500, () => {
+            this.gameStart = true
+            this.fight.destroy()
+        })
+        
+        //this.add.line(0, 0, 600, 0, 600, 1600, 0x000000);
     }
 
     update() {
@@ -55,7 +63,7 @@ class Play extends Phaser.Scene {
             })
         } else if (this.player2.HP <= 0) {
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
-            this.time.delayedCall(1800, () => {
+            this.time.delayedCall(1750, () => {
                 this.scene.start('karateWinnerScene')
             })
         }
@@ -64,16 +72,17 @@ class Play extends Phaser.Scene {
         if (this.player1.x > this.player2.x) {
             this.player1.direction = 'left'
             this.player2.direction = 'right'
-        }
-        if (this.player2.x > this.player1.x) {
+        } else {
             this.player2.direction = 'left'
             this.player1.direction = 'right'
         }
 
         //this.player1.decreaseHP(1)
 
-        this.rumbleFSM.step()
-        this.karateFSM.step()
+        if (this.gameStart) {
+            this.rumbleFSM.step()
+            this.karateFSM.step()
+        }
 
     }
 }
