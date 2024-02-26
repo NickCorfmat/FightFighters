@@ -38,6 +38,8 @@ class Play extends Phaser.Scene {
         this.keys.Enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
         this.keys.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
 
+        //this.add.line(0, 0, 600, 0, 600, 1600, 0x000000);
+
     }
 
     update() {
@@ -45,7 +47,7 @@ class Play extends Phaser.Scene {
             this.scene.restart()
         }
 
-        // Check if game over
+        // check if game over
         if (this.player1.HP <= 0) {
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
             this.time.delayedCall(1800, () => {
@@ -57,6 +59,18 @@ class Play extends Phaser.Scene {
                 this.scene.start('karateWinnerScene')
             })
         }
+
+        // face players towards each other
+        if (this.player1.x > this.player2.x) {
+            this.player1.direction = 'left'
+            this.player2.direction = 'right'
+        }
+        if (this.player2.x > this.player1.x) {
+            this.player2.direction = 'left'
+            this.player1.direction = 'right'
+        }
+
+        //this.player1.decreaseHP(1)
 
         this.rumbleFSM.step()
         this.karateFSM.step()
