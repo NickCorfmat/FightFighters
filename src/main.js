@@ -18,7 +18,7 @@ let config = {
             debug: false
         }
     },
-    scene: [ Load, Menu, Play ]
+    scene: [ Load, Menu, Play, RumbleWinner, KarateWinner ]
 }
 
 // define game
