@@ -1,15 +1,18 @@
 class HealthBar extends Phaser.GameObjects.Sprite {
-    constructor (scene, x, y) {
+    constructor (scene, x, y, width, height, health) {
         super(scene, x, y)
 
         this.bar = new Phaser.GameObjects.Graphics(scene)
+        this.bar.setDepth(10)
 
         this.x = x
         this.y = y
-        this.value = 330
-        this.p =   99/100
+        this.width = width
+        this.height = height
+        this.maxHealth = health
+        this.currentHealth = this.maxHealth
+        
         this.draw()
-
         scene.add.existing(this.bar)
     }
 
@@ -28,19 +31,22 @@ class HealthBar extends Phaser.GameObjects.Sprite {
     draw () {
         this.bar.clear();
 
-        //  BG
-        this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x, this.y, 330, 44);
-
-        //  Health
-
+        // white border
         this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x + 2, this.y + 2, 326, 40);
+        this.bar.fillRect(this.x, this.y, this.width, this.height);
 
-        this.bar.fillStyle(0xff8000);
+        // black border
+        this.bar.fillStyle(0x000000);
+        this.bar.fillRect(this.x + 3, this.y + 3, this.width - 6, this.height - 6);
 
-        var d = Math.floor(this.p * this.value);
+        // orange border
+        this.bar.fillStyle(0xffe614);
+        this.bar.fillRect(this.x + 6, this.y + 6, this.width - 12, this.height - 12);
 
-        this.bar.fillRect(this.x + 2, this.y + 2, d, 40);
+        // red health bar
+        var dynamicWidth = Math.floor(this.currentHealth/this.maxHealth * (this.width - 18));
+
+        this.bar.fillStyle(0xff8214);
+        this.bar.fillRect(this.x + 9, this.y + 9, dynamicWidth, this.height - 18);
     }
 }
