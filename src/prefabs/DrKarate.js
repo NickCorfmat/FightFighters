@@ -2,10 +2,11 @@
 class DrKarate extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, health, speed) {
         super(scene, x, y, texture, frame)
-        scene.add.existing(this)
-        scene.physics.add.existing(this)
+        scene.add.existing(this.setOrigin(0.5))
+        scene.physics.add.existing(this.setOrigin(0.5))
         
         this.body.setOffset(200, 100)
+        this.body.setSize(200, 350)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
 
@@ -13,6 +14,8 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.direction = direction >= 0 ? 'right' : 'left'
         this.HP = health
         this.fighterVelocity = speed
+
+        this.jumpHeight = -1000
 
         this.punchCooldown = 150
         this.kickCooldown = 500
@@ -22,9 +25,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.crouchTimer = 200
         this.hurtTimer = 250
 
-        this.healthBar = new HealthBar(scene, 720, 110)
-
-        console.log('dr. karate created')
+        this.healthBar = new HealthBar(scene, 725, 115, 325, 50, health)
 
         // initialize state machine managing fighter (initial state, possible states, state args[])
         scene.karateFSM = new StateMachine('idle', {
@@ -145,7 +146,7 @@ class KarateMoveState extends State {
 
 class KarateJumpState extends State {
     enter(scene, fighter) {
-        fighter.setVelocityY(-800)
+        fighter.setVelocityY(fighter.jumpHeight)
         fighter.anims.play('karate-walk')
         // fighter.once('animationcomplete', () => {
         //     this.stateMachine.transition('idle')
