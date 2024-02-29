@@ -33,6 +33,8 @@ class Load extends Phaser.Scene {
         // Rumble McSkirmish
         this.load.image('RumbleMcSkirmish', 'Rumble_McSkirmish.png')
         this.load.spritesheet('rumble_winning_spin', 'Rumble_Winning_Spin.png', { frameWidth: 101, frameHeight: 55 })
+        this.load.spritesheet('rumble_cutscene_end', 'rumble_cutscene_end.png', { frameWidth: 133, frameHeight: 56 })
+        this.load.spritesheet('rumble_cutscene_start', 'rumble_cutscene_start.png', { frameWidth: 133, frameHeight: 56 })
         this.load.spritesheet('rumble_catchphrase', 'rumble_catchphrase.png', { frameWidth: 125, frameHeight: 70 })
         this.load.spritesheet('rumble_catchphrase_end', 'rumble_catchphrase_end.png', { frameWidth: 125, frameHeight: 70 })
 
@@ -52,9 +54,29 @@ class Load extends Phaser.Scene {
     create() {
         // Environment animations
         this.anims.create({
+            key: 'rumble-talk',
+            frameRate: 12,
+            repeat: 2,
+            frames: this.anims.generateFrameNumbers('rumble_cutscene_start', { start: 0, end: 9 })
+        })
+        this.anims.create({
+            key: 'rumble-pause',
+            frameRate: 12,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('rumble_cutscene_start', { frames: [7, 8, 9] })
+        })
+
+        this.anims.create({
+            key: 'rumble-scream',
+            frameRate: 12,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('rumble_cutscene_end', { start: 0, end: 18 })
+        })
+
+        this.anims.create({
             key: 'karate-scream',
             frameRate: 10,
-            repeat: 18,
+            repeat: 6,
             frames: this.anims.generateFrameNumbers('karate-cutscene', { start: 0, end: 1 })
         })
 
@@ -292,6 +314,6 @@ class Load extends Phaser.Scene {
         })
 
         // proceed once loading completes
-        this.scene.start('menuScene')
+        this.scene.start('cutscene')
     }
 }
