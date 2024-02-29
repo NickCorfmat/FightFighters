@@ -8,7 +8,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        this.cameras.main.fadeIn(50, 255, 255, 255)
+        //this.cameras.main.fadeIn(50, 255, 255, 255)
 
         // add animated background
         this.background = this.add.sprite(0, 0, 'background').setOrigin(0).setScale(2)
