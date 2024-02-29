@@ -4,34 +4,60 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('KO', './assets/KO.png')
-        this.load.image('FIGHT', './assets/fight.png')
-        this.load.image('title', './assets/logo.png')
-        this.load.image('fire-background', './assets/fire_tilesprite.png')
-        this.load.image('pink-fire-background', './assets/pink_fire_tilesprite.png')
-        this.load.image('rumble-play-text', './assets/rumble_play_text.png')
-        this.load.image('karate-play-text', './assets/karate_play_text.png')
-        this.load.image('RumbleMcSkirmish', './assets/Rumble_McSkirmish.png')
-        this.load.image('rumble-name', './assets/rumble_mcskirmish_text.png')
-        this.load.image('karate-name', './assets/karate_name_text.png')
-        this.load.image('menu_background', './assets/temp_menu.png')
+        // load assets
+        this.load.path = "./assets/"
 
-        this.load.spritesheet('sticky', './assets/CharacterTest.png', { frameWidth: 200, frameHeight: 300 })
-        this.load.spritesheet('background', './assets/Background.png', { frameWidth: 600, frameHeight: 400 })
-        this.load.spritesheet('character-select', './assets/CharacterSelect.png', { frameWidth: 220, frameHeight: 123 })
-        this.load.spritesheet('rumble_winning_spin', './assets/Rumble_Winning_Spin.png', { frameWidth: 101, frameHeight: 55 })
-        this.load.spritesheet('rumble_catchphrase', './assets/rumble_catchphrase.png', { frameWidth: 125, frameHeight: 70 })
-        this.load.spritesheet('rumble_catchphrase_end', './assets/rumble_catchphrase_end.png', { frameWidth: 125, frameHeight: 70 })
-        this.load.spritesheet('dr-karate-play', './assets/DrKarateSpritesheet.png', { frameWidth: 600, frameHeight: 456 })
-        this.load.spritesheet('dr-karate-win', './assets/dr_karate_win.png', { frameWidth: 136, frameHeight: 144 })
-        this.load.spritesheet('dr-karate-win-end', './assets/dr_karate_win_end.png', { frameWidth: 136, frameHeight: 144 })
+        // UI
+        this.load.image('title', 'logo.png')
+        this.load.image('new-game', 'ui_new_game.png')
+        this.load.image('how-to-play', 'ui_how_to_play.png')
+        this.load.image('credits', 'ui_credits.png')
+        this.load.image('arrow', 'arrow.png')
+        this.load.image('KO', 'KO.png')
+        this.load.image('FIGHT', 'fight.png')
+        this.load.image('rumble-play-text', 'rumble_play_text.png')
+        this.load.image('karate-play-text', 'karate_play_text.png')
+        this.load.image('rumble-name', 'rumble_mcskirmish_text.png')
+        this.load.image('karate-name', 'karate_name_text.png')
+
+        // Backgrounds
+        this.load.image('fire-background', 'fire_tilesprite.png')
+        this.load.image('pink-fire-background', 'pink_fire_tilesprite.png')
+        this.load.spritesheet('character-select', 'CharacterSelect.png', { frameWidth: 220, frameHeight: 123 })
+        this.load.spritesheet('background', 'Background.png', { frameWidth: 600, frameHeight: 400 })
+
+        // Custom font
+        this.load.json('dialog', 'dialog/dialog.json')
+        this.load.bitmapFont('fight_font', 'fonts/fight.png', 'fonts/fight.xml')
+
+        // Rumble McSkirmish
+        this.load.image('RumbleMcSkirmish', 'Rumble_McSkirmish.png')
+        this.load.spritesheet('rumble_winning_spin', 'Rumble_Winning_Spin.png', { frameWidth: 101, frameHeight: 55 })
+        this.load.spritesheet('rumble_catchphrase', 'rumble_catchphrase.png', { frameWidth: 125, frameHeight: 70 })
+        this.load.spritesheet('rumble_catchphrase_end', 'rumble_catchphrase_end.png', { frameWidth: 125, frameHeight: 70 })
+
+        // Dr. Karate
+        this.load.spritesheet('karate-cutscene', 'dr_karate_cutscene.png', { frameWidth: 174, frameHeight: 66 })
+        this.load.spritesheet('dr-karate-play', 'DrKarateSpritesheet.png', { frameWidth: 600, frameHeight: 456 })
+        this.load.spritesheet('dr-karate-win', 'dr_karate_win.png', { frameWidth: 136, frameHeight: 144 })
+        this.load.spritesheet('dr-karate-win-end', 'dr_karate_win_end.png', { frameWidth: 136, frameHeight: 144 })
+
+        // Temp
+        this.load.spritesheet('sticky', 'CharacterTest.png', { frameWidth: 200, frameHeight: 300 })
         
-        this.load.audio('rumble-winner', './assets/RumbleWinner.wav')
+        // Audio
+        this.load.audio('rumble-winner', 'RumbleWinner.wav')
     }
 
     create() {
-
         // Environment animations
+        this.anims.create({
+            key: 'karate-scream',
+            frameRate: 10,
+            repeat: 18,
+            frames: this.anims.generateFrameNumbers('karate-cutscene', { start: 0, end: 1 })
+        })
+
         this.anims.create({
             key: 'joe-select',
             frameRate: 5,
