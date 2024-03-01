@@ -30,5 +30,4 @@ class Select extends Phaser.Scene {
  
         this.selectFSM.step()
     }
- }
- 
+} 

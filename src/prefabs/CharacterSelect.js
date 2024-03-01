@@ -31,10 +31,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
     }
  
  
- }
+}
  
  
- class JoeSelect extends State {
+class JoeSelect extends State {
     enter(scene, menu) {
         menu.anims.play('joe-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`joe-${menu.currentSide}`)
@@ -58,10 +58,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class BuffaloSelect extends State {
+class BuffaloSelect extends State {
     enter(scene, menu) {
         menu.anims.play('buffalo-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`buffalo-${menu.currentSide}`)
@@ -92,10 +92,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class AdmiralSelect extends State {
+class AdmiralSelect extends State {
     enter(scene, menu) {
         menu.anims.play('admiral-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`admiral-${menu.currentSide}`)
@@ -126,10 +126,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class ChunLiSelect extends State {
+class ChunLiSelect extends State {
     enter(scene, menu) {
         menu.anims.play('chun-li-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`chun-${menu.currentSide}`)
@@ -160,10 +160,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class CzarSelect extends State {
+class CzarSelect extends State {
     enter(scene, menu) {
         menu.anims.play('czar-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`czar-${menu.currentSide}`)
@@ -194,10 +194,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class BeastorSelect extends State {
+class BeastorSelect extends State {
     enter(scene, menu) {
         menu.anims.play('beast-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`beast-${menu.currentSide}`)
@@ -221,10 +221,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class RumbleSelect extends State {
+class RumbleSelect extends State {
     enter(scene, menu) {
         menu.anims.play('rumble-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`rumble-${menu.currentSide}`)
@@ -269,10 +269,10 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             }
         }
     }
- }
+}
  
  
- class KarateSelect extends State {
+class KarateSelect extends State {
     enter(scene, menu) {
         menu.anims.play('karate-select')
         scene.icon = scene.add.sprite(menu.iconX, height/2, 'icons').setOrigin(0, 0.5).setScale(5.5).play(`karate-${menu.currentSide}`)
@@ -317,5 +317,4 @@ class CharacterSelect extends Phaser.Physics.Arcade.Sprite {
             }
         }
     }
- }
- 
+} 
