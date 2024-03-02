@@ -2,12 +2,11 @@
 class DrKarate extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
         super(scene, x, y, texture, frame)
-        scene.add.existing(this.setOrigin(0.5))
-        scene.physics.add.existing(this.setOrigin(0.5))
+        scene.add.existing(this).setScale(0.94).setOrigin(0.5, 0)
+        scene.physics.add.existing(this).setScale(0.94).setOrigin(0.5, 0)
        
         // sprite configs
-        this.body.setOffset(200, 100)
-        this.body.setSize(200, 350)
+        this.body.setSize(250, 350)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
  
@@ -46,15 +45,13 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             jump: new KarateJumpState(),
             punch: new KaratePunchState(),
             kick: new KarateKickState(),
-            drill: new KarateSpecialState(),
-            hurt: new KarateHurtState(),
             death: new KarateDeathState()
         }, [scene, this])
     }
- }
+}
  
  
- class KarateIdleState extends State {
+class KarateIdleState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play('karate-idle')
@@ -96,10 +93,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class KarateMoveState extends State {
+class KarateMoveState extends State {
     execute(scene, fighter) {
         // transitions: idle, jump, punch, kick, fireball, hurt, death
         // handling: move left, right
@@ -150,10 +147,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         fighter.setVelocityX(fighter.fighterVelocity * moveDirectionX)
         fighter.anims.play('karate-walk', true)
     }
- }
+}
  
  
- class KarateJumpState extends State {
+class KarateJumpState extends State {
     enter(scene, fighter) {
         fighter.setVelocityY(fighter.jumpHeight)
         fighter.anims.play('karate-walk')
@@ -161,10 +158,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             this.stateMachine.transition('idle')
         })
     }
- }
+}
  
  
- class KaratePunchState extends State {
+class KaratePunchState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
@@ -184,10 +181,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             this.stateMachine.transition('idle')
         })
     }
- }
+}
  
  
- class KarateKickState extends State {
+class KarateKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
@@ -207,26 +204,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             this.stateMachine.transition('idle')
         })
     }
- }
+}
  
  
- class KarateSpecialState extends State {
-    enter(scene, fighter) {
- 
- 
-    }
- }
- 
- 
- class KarateHurtState extends State {
-    enter(scene, fighter) {
- 
- 
-    }
- }
- 
- 
- class KarateDeathState extends State {
+class KarateDeathState extends State {
     enter(scene, fighter) {
  
  

@@ -2,10 +2,12 @@
 class Rumble extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
         super(scene, x, y, texture, frame)
-        scene.add.existing(this.setOrigin(0.5))
-        scene.physics.add.existing(this.setOrigin(0.5))
+        scene.add.existing(this).setScale(3).setOrigin(0.5, 0)
+        scene.physics.add.existing(this).setScale(3).setOrigin(0.5, 0)
  
- 
+        // sprite configs
+        this.body.setSize(60, 110)
+        this.body.setOffset(25, 90)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
  
@@ -39,13 +41,10 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         // initialize state machine managing fighter (initial state, possible states, state args[])
         this.fsm = new StateMachine('idle', {
             idle: new RumbleIdleState(),
-            move: new RumbleMoveState(),
-            crouch: new RumbleCrouchState(),
+            walk: new RumbleMoveState(),
             jump: new RumbleJumpState(),
             punch: new RumblePunchState(),
             kick: new RumbleKickState(),
-            fireball: new RumbleSpecialState(),
-            hurt: new RumbleHurtState(),
             death: new RumbleDeathState()
         }, [scene, this])
     }
@@ -55,14 +54,13 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.healthBar.decrease(amount)
         this.HP -= amount
     }
- }
+}
  
  
- class RumbleIdleState extends State {
+class RumbleIdleState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
-        fighter.anims.play(`sticky-idle-${fighter.direction}`)
-        fighter.anims.stop()
+        fighter.anims.play(`rumble-idle-${fighter.direction}`)
     }
  
  
@@ -97,14 +95,14 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
  
         // transition to move if pressing a movement key
         if(left.isDown || right.isDown) {
-            this.stateMachine.transition('move')
+            this.stateMachine.transition('walk')
             return
         }
     }
- }
+}
  
  
- class RumbleMoveState extends State {
+class RumbleMoveState extends State {
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
@@ -151,27 +149,15 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
        
         // update fighter position and play proper animation
         fighter.setVelocityX(fighter.fighterVelocity * moveDirectionX)
-        fighter.anims.play(`sticky-walk-${fighter.direction}`, true)
+        fighter.anims.play(`rumble-walk-${fighter.direction}`, true)
     }
- }
+}
  
- 
- class RumbleCrouchState extends State {
-    enter(scene, fighter) {
-        fighter.setVelocity(0)
-        fighter.anims.play(`sticky-crouch-${fighter.direction}`)
-        scene.time.delayedCall(fighter.crouchTimer, () => {
-            this.stateMachine.transition('idle')
-        })
-    }
- }
- 
- 
- class RumbleJumpState extends State {
+class RumbleJumpState extends State {
     enter(scene, fighter) {
         // update fighter position and play proper animation
         fighter.setVelocityY(fighter.jumpHeight)
-        fighter.anims.play(`sticky-jump-${fighter.direction}`, true)
+        fighter.anims.play(`rumble-jump-${fighter.direction}`, true)
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
@@ -188,7 +174,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
  
         // transition to move if pressing a movement key
         if(left.isDown || right.isDown) {
-            this.stateMachine.transition('move')
+            this.stateMachine.transition('walk')
             return
         }
  
@@ -206,17 +192,17 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
             return
         }
     }
- }
+}
  
  
- class RumblePunchState extends State {
+class RumblePunchState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: punch attack
  
  
         fighter.setVelocity(0)
-        fighter.anims.play(`sticky-punch-${fighter.direction}`)
+        fighter.anims.play(`rumble-punch-${fighter.direction}`)
         // switch(fighter.direction) {
         //     case 'left':
         //         break
@@ -229,17 +215,17 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
             this.stateMachine.transition('idle')
         })
     }
- }
+}
  
  
- class RumbleKickState extends State {
+class RumbleKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
  
  
         fighter.setVelocity(0)
-        fighter.anims.play(`sticky-kick-${fighter.direction}`)
+        fighter.anims.play(`rumble-kick-${fighter.direction}`)
         // switch(fighter.direction) {
         //     case 'left':
         //         break
@@ -250,56 +236,9 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
             this.stateMachine.transition('idle')
         })
     }
- }
+}
  
- 
- class RumbleSpecialState extends State {
-    enter(scene, fighter) {
-        // transitions: idle
-        // handling: special fireball attack
- 
- 
-        fighter.setVelocity(0)
-        fighter.anims.play(`sticky-special-${fighter.direction}`)
-        // switch(fighter.direction) {
-        //     case 'left':
-        //         break
-        //     case 'right':
-        //         break
-        // }
-        scene.time.delayedCall(fighter.specialCooldown, () => {
-            this.stateMachine.transition('idle')
-        })
-    }
- }
- 
- 
- class RumbleHurtState extends State {
-    enter(scene, fighter) {
-        fighter.setVelocity(0)
-        fighter.anims.play(`walk-${fighter.direction}`)
-        fighter.anims.stop()
-        fighter.setTint(0xFF0000)     // turn red
-        // create knockback by sending body in direction opposite facing direction
-        switch(fighter.direction) {
-            case 'left':
-                fighter.setVelocityX(fighter.fighterVelocity/2)
-                break
-            case 'right':
-                fighter.setVelocityX(-fighter.fighterVelocity/2)
-                break
-        }
- 
- 
-        scene.time.delayedCall(fighter.hurtCooldown, () => {
-            fighter.clearTint()
-            this.stateMachine.transition('idle')
-        })
-    }
- }
- 
- 
- class RumbleDeathState extends State {
+class RumbleDeathState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play(`die-${fighter.direction}`)

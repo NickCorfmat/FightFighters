@@ -6,8 +6,8 @@ class Play extends Phaser.Scene {
  
     init(data) {
         this.gameStart = false
-        this.p1 = data.player1
-        this.p2 = data.player2
+        this.p1 = 'rumble' //data.player1
+        this.p2 = 'karate' //data.player2
  
  
         // setting up player keyboard input
@@ -47,9 +47,9 @@ class Play extends Phaser.Scene {
         }
  
  
-        // add new fighters to scene (scene, x, y, key, frame, direction, health, speed)
-        this.player1 = new (character[this.p1])(this, 375, 600, `${this.p1}`, 0, 'right', this.p1Keys, 100, 500)
-        this.player2 = new (character[this.p2])(this, 825, 600, `${this.p2}`, 0, 'left', this.p2Keys, 100, 500)
+        // add new fighters to scene (scene, x, y, key, frame, facing direction, input object, health, speed)
+        this.player1 = new (character[this.p1])(this, 420, 600, `${this.p1}`, 0, 'right', this.p1Keys, 100, 500)
+        this.player2 = new (character[this.p2])(this, 880, 600, `${this.p2}`, 0, 'left', this.p2Keys, 100, 500)
  
  
         // temp keys
@@ -60,10 +60,10 @@ class Play extends Phaser.Scene {
  
  
         // beginning 'FIGHT' sequence
-        this.fight = this.add.sprite(width/2, height/2, 'FIGHT').setOrigin(0.5).setScale(5)
+        this.fightText = this.add.sprite(width/2, height/2, 'FIGHT').setOrigin(0.5).setScale(5)
         this.time.delayedCall(1500, () => {
             this.gameStart = true
-            this.fight.destroy()
+            this.fightText.destroy()
         })
     }
  
