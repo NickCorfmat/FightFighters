@@ -2,7 +2,24 @@
 	[
 		{
 			"speaker" : "rumble",
-			"dialog" : "WINNERS NEVER LOSE !",
+			"dialog" : "DR.-KARATE-YOU-KILLED-MY-FATHER-AGAIN !",
+			"newSpeaker" : "true"
+		},
+		{
+			"speaker" : "karate",
+			"dialog" : "HHNNGHHHH !!!!!!!",
+			"newSpeaker" : "true"
+		},
+		{
+			"speaker" : "rumble",
+			"dialog" : "YOU-TAKE-THAT-BAAACKKKK ! ! ! ! ! ! ! !",
+			"newSpeaker" : "true"
+		}
+	],
+	[
+		{
+			"speaker" : "rumble",
+			"dialog" : "WINNERS-DON'T-LOSE   !",
 			"newSpeaker" : "true"
 		}
     ]
