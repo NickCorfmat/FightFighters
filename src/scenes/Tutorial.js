@@ -6,11 +6,11 @@ class Tutorial extends Phaser.Scene {
     create() {
         this.cameras.main.setBackgroundColor(0xabcabc)
 
-        this.keyEsc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
+        this.keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
     }
 
     update() {
-        if(Phaser.Input.Keyboard.JustDown(this.keyEsc)) {
+        if(Phaser.Input.Keyboard.JustDown(this.keyM)) {
             this.scene.start("menuScene")
         }
     }
