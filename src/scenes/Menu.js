@@ -28,6 +28,8 @@ class Menu extends Phaser.Scene {
  
         // Menu select state machine
         this.menuOptions = new OptionSelect(this, width/2, height/2, 'new-game', 0)
+
+        this.add.bitmapText(940, 740, 'fight-font', '[SPACE] - Select', 18).setOrigin(0)
     }
  
  

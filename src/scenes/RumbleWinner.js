@@ -66,7 +66,7 @@ class RumbleWinner extends Phaser.Scene {
                 // check if timer has exhausted its repeats
                 if(this.textTimer.getRepeatCount() == 0) {
                     this.time.delayedCall((1500), () => {
-                        this.nextText = this.add.bitmapText(985, 735, 'fight-font', 'Menu [M]', 24).setOrigin(0)
+                        this.add.bitmapText(985, 735, 'fight-font', 'Menu [M]', 24).setOrigin(0)
                         this.textTimer.destroy()
                     })
                 }

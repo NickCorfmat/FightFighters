@@ -15,7 +15,10 @@ class KarateWinner extends Phaser.Scene {
 
         this.karate.anims.play('karate-pose').once('animationcomplete', () => {
             this.karate.anims.play('karate-pose-end')
+        })
 
+        this.time.delayedCall((1600), () => {
+            this.add.bitmapText(985, 735, 'fight-font', 'Menu [M]', 24).setOrigin(0)
             this.input.keyboard.on('keydown-M', function() {
                 this.scene.start('menuScene')
             }, this)
