@@ -1,6 +1,6 @@
 // Rumble McSkirmish prefab
 class Rumble extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame, direction, health, speed) {
+    constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
         super(scene, x, y, texture, frame)
         scene.add.existing(this.setOrigin(0.5))
         scene.physics.add.existing(this.setOrigin(0.5))
@@ -9,24 +9,29 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.body.setCollideWorldBounds(true)
 
         // set custom fighter properties
-        this.direction = direction >= 0 ? 'right' : 'left'
+        this.keys = keys
         this.HP = health
         this.fighterVelocity = speed
+        this.direction = direction
 
         this.jumpHeight = -1000
-
         this.punchCooldown = 150
         this.kickCooldown = 500
         this.specialCooldown = 1500
-
         this.jumpTimer = 1000
         this.crouchTimer = 200
         this.hurtTimer = 250
+        
+        this.healthBarX = direction == 'left' ? 725 : 150
+        this.nameCardX = direction == 'left' ? 855 : 148
 
-        this.healthBar = new HealthBar(scene, 150, 115, 325, 50, health)
+        scene.add.sprite(this.nameCardX, 165, 'rumble-play-text').setOrigin(0).setScale(1.75)
+
+        // set up health bar
+        this.healthBar = new HealthBar(scene, this.healthBarX, 115, 325, 50, health)
 
         // initialize state machine managing fighter (initial state, possible states, state args[])
-        scene.rumbleFSM = new StateMachine('idle', {
+        this.fsm = new StateMachine('idle', {
             idle: new RumbleIdleState(),
             move: new RumbleMoveState(),
             crouch: new RumbleCrouchState(),
@@ -56,109 +61,70 @@ class RumbleIdleState extends State {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: none
 
-        //console.log(this.y)
+        const { left, right, jump, punch, kick } = fighter.keys
 
-        const WKey = scene.keys.keyW
-        const AKey = scene.keys.keyA
-        const SKey = scene.keys.keyS
-        const DKey = scene.keys.keyD
-
-        const CKey = scene.keys.keyC
-        const VKey = scene.keys.keyV
-        const BKey = scene.keys.keyB
-
-        // transition to crouch if pressing S key
-        if(Phaser.Input.Keyboard.JustDown(SKey)) {
-            this.stateMachine.transition('crouch')
-            return
-        }
-
-        // transition to jump if pressing W key
-        if(Phaser.Input.Keyboard.JustDown(WKey)) {
+        // transition to jump
+        if(Phaser.Input.Keyboard.JustDown(jump)) {
             this.stateMachine.transition('jump')
             return
         }
 
-        // transition to punch if pressing C key
-        if(Phaser.Input.Keyboard.JustDown(CKey)) {
+        // transition to punch
+        if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
 
-        // transition to kick if pressing V key
-        if(Phaser.Input.Keyboard.JustDown(VKey)) {
+        // transition to kick
+        if(Phaser.Input.Keyboard.JustDown(kick)) {
             this.stateMachine.transition('kick')
             return
         }
 
-        // transition to fireball if pressing B key
-        if(Phaser.Input.Keyboard.JustDown(BKey)) {
-            this.stateMachine.transition('fireball')
-            return
-        }
-
         // transition to move if pressing a movement key
-        if(AKey.isDown || DKey.isDown) {
+        if(left.isDown || right.isDown) {
             this.stateMachine.transition('move')
             return
         }
-
-        fighter.healthBar.decrease(5)
     }
 }
 
 class RumbleMoveState extends State {
-    enter() {
-
-    }
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
 
-        const WKey = scene.keys.keyW
-        const AKey = scene.keys.keyA
-        const SKey = scene.keys.keyS
-        const DKey = scene.keys.keyD
+        const { left, right, jump, punch, kick } = fighter.keys
 
-        const CKey = scene.keys.keyC
-        const VKey = scene.keys.keyV
-        const BKey = scene.keys.keyB
-
-        // transition to jump if pressing W key
-        if(Phaser.Input.Keyboard.JustDown(WKey)) {
+        // transition to jump
+        if(Phaser.Input.Keyboard.JustDown(jump)) {
             this.stateMachine.transition('jump')
             return
         }
 
-        // transition to punch if pressing C key
-        if(Phaser.Input.Keyboard.JustDown(CKey)) {
+        // transition to punch
+        if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
 
-        // transition to kick if pressing V key
-        if(Phaser.Input.Keyboard.JustDown(VKey)) {
+        // transition to kick
+        if(Phaser.Input.Keyboard.JustDown(kick)) {
             this.stateMachine.transition('kick')
             return
         }
 
-        // transition to fireball if pressing B key
-        if(Phaser.Input.Keyboard.JustDown(BKey)) {
-            this.stateMachine.transition('fireball')
-            return
-        }
-
         // transition to move if pressing a movement key
-        if(!(AKey.isDown || DKey.isDown)) {
+        if(!(left.isDown || right.isDown)) {
             this.stateMachine.transition('idle')
             return
         }
 
         // handle movement
         let moveDirectionX
-        if(AKey.isDown) {
+        if(left.isDown) {
             moveDirectionX = -1
-        } else if(DKey.isDown) {
+        } else if(right.isDown) {
             moveDirectionX = 1
         }
         
@@ -192,36 +158,23 @@ class RumbleJumpState extends State {
         // transitions: idle, move, punch, kick, fireball, hurt, death
         // handling: vertical jump
 
-        const WKey = scene.keys.keyW
-        const AKey = scene.keys.keyA
-        const SKey = scene.keys.keyS
-        const DKey = scene.keys.keyD
-
-        const CKey = scene.keys.keyC
-        const VKey = scene.keys.keyV
-        const BKey = scene.keys.keyB
+        const { left, right, punch, kick } = fighter.keys
 
         // transition to move if pressing a movement key
-        if(AKey.isDown || DKey.isDown) {
+        if(left.isDown || right.isDown) {
             this.stateMachine.transition('move')
             return
         }
 
-        // transition to punch if pressing C key
-        if(Phaser.Input.Keyboard.JustDown(CKey)) {
+        // transition to punch
+        if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
 
-        // transition to kick if pressing V key
-        if(Phaser.Input.Keyboard.JustDown(VKey)) {
+        // transition to kick
+        if(Phaser.Input.Keyboard.JustDown(kick)) {
             this.stateMachine.transition('kick')
-            return
-        }
-
-        // transition to fireball if pressing B key
-        if(Phaser.Input.Keyboard.JustDown(BKey)) {
-            this.stateMachine.transition('fireball')
             return
         }
     }
@@ -241,7 +194,6 @@ class RumblePunchState extends State {
         //         break
         // }
 
-        // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.punchCooldown, () => {
             this.stateMachine.transition('idle')
         })
@@ -261,8 +213,6 @@ class RumbleKickState extends State {
         //     case 'right':
         //         break
         // }
-
-        // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.kickCooldown, () => {
             this.stateMachine.transition('idle')
         })
@@ -282,8 +232,6 @@ class RumbleSpecialState extends State {
         //     case 'right':
         //         break
         // }
-
-        // set a short cooldown delay before going back to idle
         scene.time.delayedCall(fighter.specialCooldown, () => {
             this.stateMachine.transition('idle')
         })
@@ -306,7 +254,6 @@ class RumbleHurtState extends State {
                 break
         }
 
-        // set recovery timer
         scene.time.delayedCall(fighter.hurtCooldown, () => {
             fighter.clearTint()
             this.stateMachine.transition('idle')
