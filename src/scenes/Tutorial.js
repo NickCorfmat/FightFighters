@@ -4,11 +4,11 @@ class Tutorial extends Phaser.Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0xabcabc)
-
         this.keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
-        this.add.bitmapText(970, 735, 'fight-font', 'Menu - [M]', 24).setOrigin(0)
+        this.cameras.main.setBackgroundColor(0x00237a)
+        this.add.sprite(width/2, height/2, 'tutorial-background').setOrigin(0.5).setScale(4)
+        this.add.bitmapText(930, 705, 'fight-font', 'Menu - [M]', 24).setOrigin(0)
     }
 
     update() {

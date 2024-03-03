@@ -27,6 +27,7 @@ class Load extends Phaser.Scene {
         this.load.image('fire-background', 'fire_tilesprite.png')
         this.load.image('pink-fire-background', 'pink_fire_tilesprite.png')
         this.load.spritesheet('character-select', 'character_menu_background.png', { frameWidth: 220, frameHeight: 123 })
+        this.load.image('tutorial-background', 'tutorial_background.png')
         this.load.spritesheet('background', 'Background.png', { frameWidth: 600, frameHeight: 400 })
 
         // Custom font
@@ -115,6 +116,6 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        this.scene.start('playScene')
+        this.scene.start('tutorialScene')
     }
 }
