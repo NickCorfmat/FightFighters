@@ -10,14 +10,12 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
  
- 
         // set custom fighter properties
         this.keys = keys
         this.HP = health
         this.fighterVelocity = speed
         this.direction = direction
- 
- 
+
         this.jumpHeight = -1000
         this.punchCooldown = 150
         this.kickCooldown = 500
@@ -25,19 +23,15 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.jumpTimer = 500
         this.crouchTimer = 200
         this.hurtTimer = 250
- 
- 
+
+        // create health bar
         this.healthBarX = direction == 'left' ? 725 : 150
-        this.nameCardX = direction == 'left' ? 785 : 148
- 
- 
-        scene.add.sprite(this.nameCardX, 165, 'karate-play-text').setOrigin(0).setScale(1.75)
- 
- 
-        // set up health bar
         this.healthBar = new HealthBar(scene, this.healthBarX, 115, 325, 50, health)
- 
- 
+
+        // display name card
+        this.nameCardX = direction == 'left' ? 785 : 148
+        scene.add.sprite(this.nameCardX, 165, 'karate-play-text').setOrigin(0).setScale(1.75)
+
         // initialize state machine managing fighter (initial state, possible states, state args[])
         this.fsm = new StateMachine('idle', {
             idle: new KarateIdleState(),
@@ -49,22 +43,19 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         }, [scene, this])
     }
 }
- 
- 
+
 class KarateIdleState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
         fighter.anims.play('karate-idle')
     }
- 
- 
+
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: none
- 
- 
+
+        // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
- 
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -72,20 +63,17 @@ class KarateIdleState extends State {
             return
         }
  
- 
         // transition to punch
         if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
  
- 
         // transition to kick
         if(Phaser.Input.Keyboard.JustDown(kick)) {
             this.stateMachine.transition('kick')
             return
         }
- 
  
         // transition to move if pressing a movement key
         if(left.isDown || right.isDown) {
@@ -95,15 +83,13 @@ class KarateIdleState extends State {
     }
 }
  
- 
 class KarateMoveState extends State {
     execute(scene, fighter) {
         // transitions: idle, jump, punch, kick, fireball, hurt, death
         // handling: move left, right
- 
- 
+
+        // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
- 
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -111,13 +97,11 @@ class KarateMoveState extends State {
             return
         }
  
- 
         // transition to punch
         if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
- 
  
         // transition to kick
         if(Phaser.Input.Keyboard.JustDown(kick)) {
@@ -125,13 +109,11 @@ class KarateMoveState extends State {
             return
         }
  
- 
         // transition to move if pressing a movement key
         if(!(left.isDown || right.isDown)) {
             this.stateMachine.transition('idle')
             return
         }
- 
  
         // handle movement
         let moveDirectionX
@@ -149,7 +131,6 @@ class KarateMoveState extends State {
     }
 }
  
- 
 class KarateJumpState extends State {
     enter(scene, fighter) {
         fighter.setVelocityY(fighter.jumpHeight)
@@ -160,12 +141,10 @@ class KarateJumpState extends State {
     }
 }
  
- 
 class KaratePunchState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
- 
  
         fighter.setVelocity(0)
         fighter.anims.play('karate-punch')
@@ -176,19 +155,16 @@ class KaratePunchState extends State {
         //         break
         // }
  
- 
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
     }
 }
- 
- 
+
 class KarateKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
- 
  
         fighter.setVelocity(0)
         fighter.anims.play('karate-kick')
@@ -199,17 +175,14 @@ class KarateKickState extends State {
         //         break
         // }
  
- 
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
     }
 }
  
- 
 class KarateDeathState extends State {
     enter(scene, fighter) {
- 
  
     }
 } 

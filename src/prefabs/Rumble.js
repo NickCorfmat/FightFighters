@@ -2,22 +2,21 @@
 class Rumble extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
         super(scene, x, y, texture, frame)
+
         scene.add.existing(this).setScale(3).setOrigin(0.5, 0)
         scene.physics.add.existing(this).setScale(3).setOrigin(0.5, 0)
- 
+
         // sprite configs
         this.body.setSize(60, 110)
         this.body.setOffset(25, 90)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
  
- 
         // set custom fighter properties
         this.keys = keys
         this.HP = health
         this.fighterVelocity = speed
         this.direction = direction
- 
  
         this.jumpHeight = -1000
         this.punchCooldown = 150
@@ -26,17 +25,14 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.jumpTimer = 1000
         this.crouchTimer = 200
         this.hurtTimer = 250
-       
+ 
+        // create health bar
         this.healthBarX = direction == 'left' ? 725 : 150
-        this.nameCardX = direction == 'left' ? 855 : 148
- 
- 
-        scene.add.sprite(this.nameCardX, 165, 'rumble-play-text').setOrigin(0).setScale(1.75)
- 
- 
-        // set up health bar
         this.healthBar = new HealthBar(scene, this.healthBarX, 115, 325, 50, health)
- 
+
+        // display name card
+        this.nameCardX = direction == 'left' ? 855 : 148
+        scene.add.sprite(this.nameCardX, 165, 'rumble-play-text').setOrigin(0).setScale(1.75)
  
         // initialize state machine managing fighter (initial state, possible states, state args[])
         this.fsm = new StateMachine('idle', {
@@ -49,13 +45,11 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         }, [scene, this])
     }
  
- 
     decreaseHP(amount) {
         this.healthBar.decrease(amount)
         this.HP -= amount
     }
 }
- 
  
 class RumbleIdleState extends State {
     enter(scene, fighter) {
@@ -63,14 +57,12 @@ class RumbleIdleState extends State {
         fighter.anims.play(`rumble-idle-${fighter.direction}`)
     }
  
- 
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: none
  
- 
+        // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
- 
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -78,20 +70,17 @@ class RumbleIdleState extends State {
             return
         }
  
- 
         // transition to punch
         if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
  
- 
         // transition to kick
         if(Phaser.Input.Keyboard.JustDown(kick)) {
             this.stateMachine.transition('kick')
             return
         }
- 
  
         // transition to move if pressing a movement key
         if(left.isDown || right.isDown) {
@@ -107,9 +96,8 @@ class RumbleMoveState extends State {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
  
- 
+        // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
- 
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -117,13 +105,11 @@ class RumbleMoveState extends State {
             return
         }
  
- 
         // transition to punch
         if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
- 
  
         // transition to kick
         if(Phaser.Input.Keyboard.JustDown(kick)) {
@@ -131,13 +117,11 @@ class RumbleMoveState extends State {
             return
         }
  
- 
         // transition to move if pressing a movement key
         if(!(left.isDown || right.isDown)) {
             this.stateMachine.transition('idle')
             return
         }
- 
  
         // handle movement
         let moveDirectionX
@@ -163,14 +147,12 @@ class RumbleJumpState extends State {
         })
     }
  
- 
     execute(scene, fighter) {
         // transitions: idle, move, punch, kick, fireball, hurt, death
         // handling: vertical jump
- 
- 
+
+        // create local copy keyboard object
         const { left, right, punch, kick } = fighter.keys
- 
  
         // transition to move if pressing a movement key
         if(left.isDown || right.isDown) {
@@ -178,13 +160,11 @@ class RumbleJumpState extends State {
             return
         }
  
- 
         // transition to punch
         if(Phaser.Input.Keyboard.JustDown(punch)) {
             this.stateMachine.transition('punch')
             return
         }
- 
  
         // transition to kick
         if(Phaser.Input.Keyboard.JustDown(kick)) {
@@ -194,12 +174,10 @@ class RumbleJumpState extends State {
     }
 }
  
- 
 class RumblePunchState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: punch attack
- 
  
         fighter.setVelocity(0)
         fighter.anims.play(`rumble-punch-${fighter.direction}`)
@@ -210,19 +188,16 @@ class RumblePunchState extends State {
         //         break
         // }
  
- 
         scene.time.delayedCall(fighter.punchCooldown, () => {
             this.stateMachine.transition('idle')
         })
     }
 }
  
- 
 class RumbleKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
- 
  
         fighter.setVelocity(0)
         fighter.anims.play(`rumble-kick-${fighter.direction}`)
