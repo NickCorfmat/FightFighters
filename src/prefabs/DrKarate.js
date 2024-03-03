@@ -30,7 +30,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
 
         // display name card
         this.nameCardX = direction == 'left' ? 785 : 148
-        scene.add.sprite(this.nameCardX, 165, 'karate-play-text').setOrigin(0).setScale(1.75)
+        scene.add.sprite(this.nameCardX, 166, 'karate-play-text').setOrigin(0).setScale(1.75)
 
         // initialize state machine managing fighter (initial state, possible states, state args[])
         this.fsm = new StateMachine('idle', {

@@ -29,24 +29,24 @@ class HealthBar extends Phaser.GameObjects.Sprite {
     }
 
     draw () {
-        this.bar.clear();
+        this.bar.clear()
 
         // white border
-        this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x, this.y, this.width, this.height);
+        this.bar.fillStyle(0xffffff, 0.7)
+        this.bar.fillRect(this.x, this.y, this.width, this.height)
 
-        // black border
-        this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x + 3, this.y + 3, this.width - 6, this.height - 6);
+        // // black border
+        this.bar.lineStyle(6, 0x000000, 1)
+        this.bar.strokeRect(this.x + 7, this.y + 7, this.width - 14, this.height - 14)
 
-        // orange border
-        this.bar.fillStyle(0xffe614);
-        this.bar.fillRect(this.x + 6, this.y + 6, this.width - 12, this.height - 12);
+        // yelow border
+        this.bar.lineStyle(4, 0xffe614, 1)
+        this.bar.strokeRect(this.x + 9, this.y + 9, this.width - 18, this.height - 18)
 
-        // red health bar
-        var dynamicWidth = Math.floor(this.currentHealth/this.maxHealth * (this.width - 18));
+        // orange health bar
+        let dynamicWidth = Math.floor(this.currentHealth/this.maxHealth * (this.width - 20))
 
-        this.bar.fillStyle(0xff8214);
-        this.bar.fillRect(this.x + 9, this.y + 9, dynamicWidth, this.height - 18);
+        this.bar.fillStyle(0xff8214)
+        this.bar.fillRect(this.x + 10, this.y + 10, dynamicWidth, this.height - 20)
     }
 }
