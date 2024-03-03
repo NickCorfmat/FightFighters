@@ -28,6 +28,7 @@ class Load extends Phaser.Scene {
         this.load.image('pink-fire-background', 'pink_fire_tilesprite.png')
         this.load.spritesheet('character-select', 'character_menu_background.png', { frameWidth: 220, frameHeight: 123 })
         this.load.image('tutorial-background', 'tutorial_background.png')
+        this.load.image('menu-background', 'menu_background.png')
         this.load.spritesheet('background', 'Background.png', { frameWidth: 600, frameHeight: 400 })
 
         // Custom font
@@ -35,7 +36,8 @@ class Load extends Phaser.Scene {
         this.load.bitmapFont('fight-font', 'fonts/fight.png', 'fonts/fight.xml')
 
         // Rumble McSkirmish
-        this.load.spritesheet('rumble', 'RumbleSpritesheet.png', { frameWidth: 150, frameHeight: 200 })
+        this.load.spritesheet('rumble-left', 'RumbleSpritesheetLeft.png', { frameWidth: 150, frameHeight: 200 })
+        this.load.spritesheet('rumble-right', 'RumbleSpritesheetRight.png', { frameWidth: 150, frameHeight: 200 })
         this.load.spritesheet('rumble_winning_spin', 'Rumble_Winning_Spin.png', { frameWidth: 101, frameHeight: 55 })
         this.load.spritesheet('rumble_cutscene_end', 'rumble_cutscene_end.png', { frameWidth: 133, frameHeight: 56 })
         this.load.spritesheet('rumble_cutscene_start', 'rumble_cutscene_start.png', { frameWidth: 133, frameHeight: 56 })
@@ -50,6 +52,12 @@ class Load extends Phaser.Scene {
 
         // Audio
         this.load.audio('rumble-winner', 'RumbleWinner.wav')
+        this.load.audio('cutscene-sfx', 'cutscene.wav')
+        this.load.audio('fight-sfx', 'fight.wav')
+        this.load.audio('karate-win-sfx', 'karate_win.wav')
+        this.load.audio('menu-select-sfx', 'select_menu.wav')
+        this.load.audio('play-sfx', 'play.wav')
+        this.load.audio('ko-sfx', 'knockout.wav')
     }
 
     create() {
@@ -90,18 +98,18 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'fight-background', frameRate: 2.5, repeat: -1, frames: this.anims.generateFrameNumbers('background', { start: 0, end: 1 }) })
 
         // Rumble animations
-        this.anims.create({ key: 'rumble-idle-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-idle-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 13 }) })
-        this.anims.create({ key: 'rumble-walk-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-walk-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 14, end: 20 }) })
-        this.anims.create({ key: 'rumble-jump-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-jump-right', frameRate: 14, repeat: 0, frames: this.anims.generateFrameNumbers('rumble', { start: 21, end: 28 }) })
-        this.anims.create({ key: 'rumble-punch-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-punch-right', frameRate: 14, repeat: 0, frames: this.anims.generateFrameNumbers('rumble', { start: 29, end: 35 }) })
-        this.anims.create({ key: 'rumble-kick-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-kick-right', frameRate: 14, repeat: 0,frames: this.anims.generateFrameNumbers('rumble', { start: 36, end: 43 }) })
-        this.anims.create({ key: 'rumble-death-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 0, end: 0 }) })
-        this.anims.create({ key: 'rumble-death-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble', { start: 54, end: 62 }) })
+        this.anims.create({ key: 'rumble-idle-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 0, end: 13 }) })
+        this.anims.create({ key: 'rumble-idle-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 0, end: 13 }) })
+        this.anims.create({ key: 'rumble-walk-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 14, end: 20 }) })
+        this.anims.create({ key: 'rumble-walk-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 14, end: 20 }) })
+        this.anims.create({ key: 'rumble-jump-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 21, end: 28 }) })
+        this.anims.create({ key: 'rumble-jump-right', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 21, end: 28 }) })
+        this.anims.create({ key: 'rumble-punch-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 29, end: 35 }) })
+        this.anims.create({ key: 'rumble-punch-right', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 29, end: 35 }) })
+        this.anims.create({ key: 'rumble-kick-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 36, end: 43 }) })
+        this.anims.create({ key: 'rumble-kick-right', frameRate: 14, repeat: 0,frames: this.anims.generateFrameNumbers('rumble-right', { start: 36, end: 43 }) })
+        this.anims.create({ key: 'rumble-death-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 54, end: 62 }) })
+        this.anims.create({ key: 'rumble-death-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 54, end: 62 }) })
 
         this.anims.create({ key: 'rumble-spin', frameRate: 7, repeat: 1, frames: this.anims.generateFrameNumbers('rumble_winning_spin', { start: 0, end: 7 }) })
         this.anims.create({ key: 'rumble-speech', frameRate: 10, repeat: 0, frames: this.anims.generateFrameNumbers('rumble_catchphrase', { start: 0, end: 12 }) })
@@ -116,6 +124,6 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        this.scene.start('tutorialScene')
+        this.scene.start('menuScene')
     }
 }
