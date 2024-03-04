@@ -107,10 +107,10 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'rumble-idle-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 0, end: 13 }) })
         this.anims.create({ key: 'rumble-walk-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 14, end: 20 }) })
         this.anims.create({ key: 'rumble-walk-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 14, end: 20 }) })
-        this.anims.create({ key: 'rumble-jump-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 21, end: 28 }) })
-        this.anims.create({ key: 'rumble-jump-right', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 21, end: 28 }) })
-        this.anims.create({ key: 'rumble-punch-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 29, end: 35 }) })
-        this.anims.create({ key: 'rumble-punch-right', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 29, end: 35 }) })
+        this.anims.create({ key: 'rumble-jump-left', frameRate: 8, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 21, end: 28 }) })
+        this.anims.create({ key: 'rumble-jump-right', frameRate: 8, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 21, end: 28 }) })
+        this.anims.create({ key: 'rumble-punch-left', frameRate: 10, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 29, end: 35 }) })
+        this.anims.create({ key: 'rumble-punch-right', frameRate: 10, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 29, end: 35 }) })
         this.anims.create({ key: 'rumble-kick-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 36, end: 43 }) })
         this.anims.create({ key: 'rumble-kick-right', frameRate: 14, repeat: 0,frames: this.anims.generateFrameNumbers('rumble-right', { start: 36, end: 43 }) })
         this.anims.create({ key: 'rumble-death-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 54, end: 62 }) })
@@ -129,6 +129,6 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        this.scene.start('menuScene')
+        this.scene.start('playScene')
     }
 }
