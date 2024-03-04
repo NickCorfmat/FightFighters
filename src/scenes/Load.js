@@ -45,7 +45,8 @@ class Load extends Phaser.Scene {
 
         // Dr. Karate
         this.load.spritesheet('karate-cutscene', 'dr_karate_cutscene.png', { frameWidth: 174, frameHeight: 66 })
-        this.load.spritesheet('karate', 'DrKarateSpritesheet.png', { frameWidth: 600, frameHeight: 456 })
+        this.load.spritesheet('karate-left', 'KarateSpritesheetLeft.png', { frameWidth: 200, frameHeight: 152 })
+        this.load.spritesheet('karate-right', 'KarateSpritesheetRight.png', { frameWidth: 200, frameHeight: 152 })
         this.load.spritesheet('dr-karate-win', 'dr_karate_win.png', { frameWidth: 136, frameHeight: 144 })
         this.load.spritesheet('dr-karate-win-end', 'dr_karate_win_end.png', { frameWidth: 136, frameHeight: 144 })
 
@@ -121,14 +122,19 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'rumble-speech-end', frameRate: 10, repeat: -1, frames: this.anims.generateFrameNumbers('rumble_catchphrase_end', { start: 0, end: 2 }) })
 
         // Dr. Karate animations
-        this.anims.create({ key: 'karate-idle', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate', { start: 0, end: 5 }) })
-        this.anims.create({ key: 'karate-walk', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate', { start: 6, end: 11 }) })
-        this.anims.create({ key: 'karate-punch', frameRate: 18, repeat: 0, frames: this.anims.generateFrameNumbers('karate', { start: 12, end: 19 })})
-        this.anims.create({ key: 'karate-kick', frameRate: 16, repeat: 0, frames: this.anims.generateFrameNumbers('karate', { start: 19, end: 27 }) })
+        this.anims.create({ key: 'karate-idle-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate-left', { start: 0, end: 5 }) })
+        this.anims.create({ key: 'karate-idle-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate-right', { start: 0, end: 5 }) })
+        this.anims.create({ key: 'karate-walk-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate-left', { start: 6, end: 11 }) })
+        this.anims.create({ key: 'karate-walk-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('karate-right', { start: 6, end: 11 }) })
+        this.anims.create({ key: 'karate-punch-left', frameRate: 18, repeat: 0, frames: this.anims.generateFrameNumbers('karate-left', { start: 12, end: 19 })})
+        this.anims.create({ key: 'karate-punch-right', frameRate: 18, repeat: 0, frames: this.anims.generateFrameNumbers('karate-right', { start: 12, end: 19 })})
+        this.anims.create({ key: 'karate-kick-left', frameRate: 16, repeat: 0, frames: this.anims.generateFrameNumbers('karate-left', { start: 19, end: 27 }) })
+        this.anims.create({ key: 'karate-kick-right', frameRate: 16, repeat: 0, frames: this.anims.generateFrameNumbers('karate-right', { start: 19, end: 27 }) })
+
         this.anims.create({ key: 'karate-pose', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('dr-karate-win', { start: 0, end: 5 }) })
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        this.scene.start('playScene')
+        this.scene.start('menuScene')
     }
 }

@@ -139,7 +139,7 @@ class RumbleMoveState extends State {
             fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
         }
 
-        fighter.anims.play(`rumble-walk-${fighter.direction}`)
+        fighter.anims.play(`rumble-walk-${fighter.direction}`, true)
     }
 }
  

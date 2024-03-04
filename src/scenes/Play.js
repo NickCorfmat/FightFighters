@@ -56,7 +56,7 @@ class Play extends Phaser.Scene {
  
         // add new fighters to scene (scene, x, y, texture, frame, facing direction, keyboard input, health, speed)
         this.player1 = new (character[this.p1])(this, 420, 600, `${this.p1}-right`, 0, 'right', this.p1Keys, 100, 500)
-        this.player2 = new (character[this.p2])(this, 880, 600, `${this.p2}`, 0, 'left', this.p2Keys, 100, 500)
+        this.player2 = new (character[this.p2])(this, 880, 600, `${this.p2}-left`, 0, 'left', this.p2Keys, 100, 500)
  
         // beginning 'FIGHT' sequence
         this.fightSFX.play()

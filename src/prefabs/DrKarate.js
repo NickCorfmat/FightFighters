@@ -2,19 +2,27 @@
 class DrKarate extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
         super(scene, x, y, texture, frame)
-        scene.add.existing(this).setScale(0.94).setOrigin(0.5, 0)
-        scene.physics.add.existing(this).setScale(0.94).setOrigin(0.5, 0)
-       
-        // sprite configs
-        this.body.setSize(250, 350)
-        this.body.setGravityY(2000)
-        this.body.setCollideWorldBounds(true)
- 
+        scene.add.existing(this).setScale(2.85).setOrigin(0.5, 0)
+        scene.physics.add.existing(this).setScale(2.85).setOrigin(0.5, 0)
+
         // set custom fighter properties
         this.keys = keys
         this.HP = health
         this.fighterVelocity = speed
         this.direction = direction
+
+        this.MAX_VELOCITY = 500
+        this.MAX_VELOCITY_X = 600
+        this.MAX_VELOCITY_Y = 1200
+        this.ACCELERATION = 250
+        this.JUMP_VELOCITY = -1500
+        this.DRAG = 350
+       
+        // sprite configs
+        this.body.setSize(60, 115)
+        this.body.setOffset(70, 20)
+        this.body.setGravityY(2000)
+        this.body.setCollideWorldBounds(true)
 
         this.jumpHeight = -1000
         this.punchCooldown = 150
@@ -47,7 +55,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
 class KarateIdleState extends State {
     enter(scene, fighter) {
         fighter.setVelocity(0)
-        fighter.anims.play('karate-idle')
+        fighter.anims.play(`karate-idle-${fighter.direction}`)
     }
 
     execute(scene, fighter) {
@@ -116,25 +124,20 @@ class KarateMoveState extends State {
         }
  
         // handle movement
-        let moveDirectionX
         if(left.isDown) {
-            moveDirectionX = -1
-            fighter.direction = 'left'
+            fighter.body.setVelocityX(-fighter.MAX_VELOCITY_X)
         } else if(right.isDown) {
-            moveDirectionX = 1
-            fighter.direction = 'right'
+            fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
         }
-       
-        // update fighter position and play proper animation
-        fighter.setVelocityX(fighter.fighterVelocity * moveDirectionX)
-        fighter.anims.play('karate-walk', true)
+
+        fighter.anims.play(`karate-walk-${fighter.direction}`, true)
     }
 }
  
 class KarateJumpState extends State {
     enter(scene, fighter) {
         fighter.setVelocityY(fighter.jumpHeight)
-        fighter.anims.play('karate-walk')
+        fighter.anims.play(`karate-walk-${fighter.direction}`)
         scene.time.delayedCall(fighter.jumpTimer, () => {
             this.stateMachine.transition('idle')
         })
@@ -147,13 +150,7 @@ class KaratePunchState extends State {
         // handling: kick attack
  
         fighter.setVelocity(0)
-        fighter.anims.play('karate-punch')
-        // switch(fighter.direction) {
-        //     case 'left':
-        //         break
-        //     case 'right':
-        //         break
-        // }
+        fighter.anims.play(`karate-punch-${fighter.direction}`)
  
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
@@ -165,16 +162,10 @@ class KarateKickState extends State {
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
- 
+        
         fighter.setVelocity(0)
-        fighter.anims.play('karate-kick')
-        // switch(fighter.direction) {
-        //     case 'left':
-        //         break
-        //     case 'right':
-        //         break
-        // }
- 
+        fighter.anims.play(`karate-kick-${fighter.direction}`)
+
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
