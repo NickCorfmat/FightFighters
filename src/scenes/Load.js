@@ -55,6 +55,9 @@ class Load extends Phaser.Scene {
         this.load.audio('fight-sfx', 'fight.wav')
         this.load.audio('karate-win-sfx', 'karate_win.wav')
         this.load.audio('menu-select-sfx', 'select_menu.wav')
+        this.load.audio('select-sfx-1', 'select_1.wav')
+        this.load.audio('select-sfx-2', 'select_2.wav')
+        this.load.audio('locked-sfx', 'locked.wav')
         this.load.audio('play-sfx', 'play.wav')
         this.load.audio('ko-sfx', 'knockout.wav')
     }
@@ -82,10 +85,12 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'player1-select', frameRate: 2, repeat: -1, frames: this.anims.generateFrameNumbers('current-player', { start: 0, end: 1 }) })
         this.anims.create({ key: 'player2-select', frameRate: 2, repeat: -1, frames: this.anims.generateFrameNumbers('current-player', { start: 2, end: 3 }) })
         this.anims.create({ key: 'both-selected', frameRate: 1, repeat: -1, frames: this.anims.generateFrameNumbers('current-player', { start: 2, end: 2 }) })
+
         this.anims.create({ key: 'rumble-talk', frameRate: 12, repeat: 2, frames: this.anims.generateFrameNumbers('rumble_cutscene_start', { start: 0, end: 9 }) })
         this.anims.create({ key: 'rumble-pause', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble_cutscene_start', { frames: [7, 8, 9] }) })
-        this.anims.create({ key: 'rumble-scream', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble_cutscene_end', { start: 0, end: 18 }) })
+        this.anims.create({ key: 'rumble-scream', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble_cutscene_end', { start: 0, end: 21 }) })
         this.anims.create({ key: 'karate-scream', frameRate: 10, repeat: 6, frames: this.anims.generateFrameNumbers('karate-cutscene', { start: 0, end: 1 }) })
+
         this.anims.create({ key: 'joe-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 0, end: 1 }) })
         this.anims.create({ key: 'rumble-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 2, end: 3 }) })
         this.anims.create({ key: 'buffalo-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 4, end: 5 }) })
@@ -94,6 +99,7 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'czar-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 10, end: 11 }) })
         this.anims.create({ key: 'beast-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 12, end: 13 }) })
         this.anims.create({ key: 'karate-select', frameRate: 5, repeat: -1, frames: this.anims.generateFrameNumbers('character-select', { start: 14, end: 15 }) })
+
         this.anims.create({ key: 'fight-background', frameRate: 2.5, repeat: -1, frames: this.anims.generateFrameNumbers('background', { start: 0, end: 1 }) })
 
         // Rumble animations

@@ -16,6 +16,10 @@ class Menu extends Phaser.Scene {
         this.background = this.add.sprite(0, 0, 'background').setOrigin(0).setScale(2)
         this.background.play('fight-background')
 
+        // audio
+        this.selectSFX_1 = this.sound.add('select-sfx-1')
+        this.selectSFX_2 = this.sound.add('select-sfx-2')
+
         // title animation
         this.title = this.add.sprite(-100, height/3, 'title').setOrigin(0.44, 0.5).setScale(9)
 
@@ -71,6 +75,7 @@ class NewGameSelect extends State {
  
         // transition to tutorial option if down arrow is pressed
         if(Phaser.Input.Keyboard.JustDown(down)) {
+            scene.selectSFX_1.play()
             scene.arrow.destroy()
             this.stateMachine.transition('tutorial')
             return
@@ -78,6 +83,7 @@ class NewGameSelect extends State {
 
         // start game if space is pressed
         if(Phaser.Input.Keyboard.JustDown(space) && !this.isTransitioning) {
+            scene.selectSFX_2.play()
             scene.arrow.destroy()
             this.isTransitioning = true
             scene.cameras.main.fadeOut(750, 255, 255, 255)
@@ -100,6 +106,7 @@ class HowToPlaySelect extends State {
  
         // transition to new game option if up arrow is pressed
         if(Phaser.Input.Keyboard.JustDown(up)) {
+            scene.selectSFX_1.play()
             scene.arrow.destroy()
             this.stateMachine.transition('start')
             return
@@ -107,6 +114,7 @@ class HowToPlaySelect extends State {
  
         // transition to credits option if down arrow is pressed
         if(Phaser.Input.Keyboard.JustDown(down)) {
+            scene.selectSFX_1.play()
             scene.arrow.destroy()
             this.stateMachine.transition('credits')
             return
@@ -114,6 +122,7 @@ class HowToPlaySelect extends State {
  
         // transition to tutorial scene if space is pressed
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_2.play()
             scene.arrow.destroy()
             scene.scene.start('tutorialScene')
         }
@@ -132,6 +141,7 @@ class CreditsSelect extends State {
  
         // transition to tutorial option if up arrow is pressed
         if(Phaser.Input.Keyboard.JustDown(up)) {
+            scene.selectSFX_1.play()
             scene.arrow.destroy()
             this.stateMachine.transition('tutorial')
             return
@@ -139,6 +149,7 @@ class CreditsSelect extends State {
  
         // transition to credits scene if space is pressed
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_2.play()
             scene.arrow.destroy()
             scene.scene.start('creditScene')
         }

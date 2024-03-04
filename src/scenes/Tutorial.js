@@ -7,6 +7,9 @@ class Tutorial extends Phaser.Scene {
         // define keyboard input
         this.keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
+        // audio
+        this.selectSFX_1 = this.sound.add('select-sfx-1')
+
         // background
         this.cameras.main.setBackgroundColor(0x00237a)
         this.add.sprite(width/2, height/2, 'tutorial-background').setOrigin(0.5).setScale(4)
@@ -18,6 +21,7 @@ class Tutorial extends Phaser.Scene {
     update() {
         // check for transition back to main menu
         if(Phaser.Input.Keyboard.JustDown(this.keyM)) {
+            this.selectSFX_1.play()
             this.scene.start("menuScene")
         }
     }

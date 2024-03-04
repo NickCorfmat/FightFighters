@@ -17,6 +17,10 @@ class Select extends Phaser.Scene {
         this.cameras.main.fadeIn(450, 255, 255, 255)
 
         // audio
+        this.selectSFX_1 = this.sound.add('select-sfx-1', { volume: 1 })
+        this.selectSFX_2 = this.sound.add('select-sfx-2', { volume: 1 })
+        this.lockedSFX = this.sound.add('locked-sfx', { volume: 2 })
+
         this.menuSelectMusic = this.sound.add('menu-select-sfx', { loop: true, volume: 1})
         this.menuSelectMusic.play() // play music
  
@@ -32,6 +36,7 @@ class Select extends Phaser.Scene {
     update() {
         // check for transition back to main menu
         if(Phaser.Input.Keyboard.JustDown(this.keys.keyM) && !this.isTransitioning) {
+            this.selectSFX_1.play()
             this.menuSelectMusic.stop() // stop music
             this.scene.start("menuScene")
         }

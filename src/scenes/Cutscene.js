@@ -19,7 +19,7 @@ class Cutscene extends Phaser.Scene {
         this.pinkBackground = this.add.tileSprite(0, 0, 158, 106, 'pink-fire-background').setOrigin(0).setScale(7.6).setAlpha(0)
 
         // audio
-        this.cutsceneAudio = this.sound.add('cutscene-sfx', { loop: false, volume: 1})
+        this.cutsceneAudio = this.sound.add('cutscene-sfx', { loop: false, volume: 1.5})
 
         // character sprites
         this.karate = this.add.sprite(width, height/2, 'karate-cutscene').setOrigin(1, 0.5).setScale(6.4).setAlpha(0)

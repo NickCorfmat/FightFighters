@@ -55,6 +55,7 @@ class RumbleSelect extends State {
  
         // transition to Suggessica select
         if(Phaser.Input.Keyboard.JustDown(right) && !scene.isTransitioning) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('chunLi')
             return
@@ -62,6 +63,7 @@ class RumbleSelect extends State {
  
         // transition to Joe Zambique select
         if(Phaser.Input.Keyboard.JustDown(down) && !scene.isTransitioning) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('joe')
             return
@@ -69,6 +71,8 @@ class RumbleSelect extends State {
  
         // Select fighter and start new scene
         if(Phaser.Input.Keyboard.JustDown(space) && !scene.isTransitioning) {
+            scene.selectSFX_2.play()
+
             if (menu.currentPlayer == 2) {
                 // update properties
                 menu.player2 = 'rumble'
@@ -118,6 +122,7 @@ class KarateSelect extends State {
  
         // transition to Admiral Big-Calves select
         if(Phaser.Input.Keyboard.JustDown(left) && !scene.isTransitioning) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('admiral')
             return
@@ -125,6 +130,7 @@ class KarateSelect extends State {
  
         // transition to Beastor select
         if(Phaser.Input.Keyboard.JustDown(up) && !scene.isTransitioning) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('beast')
             return
@@ -132,6 +138,8 @@ class KarateSelect extends State {
 
         // Select fighter and start new scene
         if(Phaser.Input.Keyboard.JustDown(space) && !scene.isTransitioning) {
+            scene.selectSFX_2.play()
+
             if (menu.currentPlayer == 2) {
                 // update properties
                 menu.player2 = 'karate'
@@ -180,6 +188,7 @@ class JoeSelect extends State {
  
         // transition to N-Buffalo select
         if(Phaser.Input.Keyboard.JustDown(right)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('buffalo')
             return
@@ -187,6 +196,7 @@ class JoeSelect extends State {
  
         // transition to Rumble McSkirmish select
         if(Phaser.Input.Keyboard.JustDown(up)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('rumble')
             return
@@ -194,6 +204,7 @@ class JoeSelect extends State {
  
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -218,6 +229,7 @@ class BuffaloSelect extends State {
  
         // transition to Joe Zambique select
         if(Phaser.Input.Keyboard.JustDown(left)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('joe')
             return
@@ -225,6 +237,7 @@ class BuffaloSelect extends State {
  
         // transition to Suggessica select
         if(Phaser.Input.Keyboard.JustDown(up)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('chunLi')
             return
@@ -232,6 +245,7 @@ class BuffaloSelect extends State {
  
         // transition to Admiral Big-Calves select
         if(Phaser.Input.Keyboard.JustDown(right)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('admiral')
             return
@@ -239,6 +253,7 @@ class BuffaloSelect extends State {
  
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -263,6 +278,7 @@ class AdmiralSelect extends State {
  
         // transition to N-Buffalo select
         if(Phaser.Input.Keyboard.JustDown(left)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('buffalo')
             return
@@ -270,6 +286,7 @@ class AdmiralSelect extends State {
  
         // transition to Dr. Karate select
         if(Phaser.Input.Keyboard.JustDown(right)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('karate')
             return
@@ -277,6 +294,7 @@ class AdmiralSelect extends State {
  
         // transition to Czar-Barian select
         if(Phaser.Input.Keyboard.JustDown(up)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('czar')
             return
@@ -284,6 +302,7 @@ class AdmiralSelect extends State {
  
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -308,6 +327,7 @@ class ChunLiSelect extends State {
  
         // transition to Rumble McSkirmish select
         if(Phaser.Input.Keyboard.JustDown(left)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('rumble')
             return
@@ -315,6 +335,7 @@ class ChunLiSelect extends State {
  
         // transition to N-Buffalo select
         if(Phaser.Input.Keyboard.JustDown(down)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('buffalo')
             return
@@ -322,6 +343,7 @@ class ChunLiSelect extends State {
  
         // transition to Czar-Barian select
         if(Phaser.Input.Keyboard.JustDown(right)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('czar')
             return
@@ -329,6 +351,7 @@ class ChunLiSelect extends State {
  
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -353,6 +376,7 @@ class CzarSelect extends State {
  
         // transition to Suggessica select
         if(Phaser.Input.Keyboard.JustDown(left)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('chunLi')
             return
@@ -360,6 +384,7 @@ class CzarSelect extends State {
  
         // transition to Admiral Big-Calves select
         if(Phaser.Input.Keyboard.JustDown(down)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('admiral')
             return
@@ -367,6 +392,7 @@ class CzarSelect extends State {
  
         // transition to Beastor select
         if(Phaser.Input.Keyboard.JustDown(right)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('beast')
             return
@@ -374,6 +400,7 @@ class CzarSelect extends State {
  
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -398,6 +425,7 @@ class BeastorSelect extends State {
 
         // transition to Czar-Barian select
         if(Phaser.Input.Keyboard.JustDown(left)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('czar')
             return
@@ -405,13 +433,16 @@ class BeastorSelect extends State {
 
         // transition to Dr. Karate select
         if(Phaser.Input.Keyboard.JustDown(down)) {
+            scene.selectSFX_1.play()
             scene.icon.destroy()
             this.stateMachine.transition('karate')
+            scene.selectSFX_1.play()
             return
         }
 
         // transition to Locked state
         if(Phaser.Input.Keyboard.JustDown(space)) {
+            scene.selectSFX_1.play()
             this.stateMachine.transition('locked')
             return
         }
@@ -421,6 +452,7 @@ class BeastorSelect extends State {
 // Locked fighter state
 class LockedState extends State {
     enter(scene, menu) {
+        scene.lockedSFX.play()
         scene.lock = scene.add.sprite(width/2, height/2, 'lock') // display locked animation
         scene.lock.setOrigin(0.5).setScale(8)
         scene.lock.play('locked').once('animationcomplete', () => {

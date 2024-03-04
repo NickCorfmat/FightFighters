@@ -10,8 +10,9 @@ class RumbleWinner extends Phaser.Scene {
         // background
         this.background = this.add.tileSprite(0, 0, 184, 102, 'fire-background').setOrigin(0).setScale(8)
  
-        // play audio
-        this.speech = this.sound.add('rumble-winner')
+        // audio
+        this.selectSFX_2 = this.sound.add('select-sfx-2')
+        this.speech = this.sound.add('rumble-winner', { volume: 3 })
         this.speech.play()
 
         // winner name text
@@ -31,6 +32,7 @@ class RumbleWinner extends Phaser.Scene {
 
                 // check for transition back to main menu
                 this.input.keyboard.on('keydown-M', function() {
+                    this.selectSFX_2.play()
                     this.scene.start('menuScene')
                 }, this)
             })
