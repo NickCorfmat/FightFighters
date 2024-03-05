@@ -55,6 +55,7 @@ class Cutscene extends Phaser.Scene {
 
                         // begin play scene given fighter selection args
                         this.rumble.once('animationcomplete', () => {
+                            this.cutsceneAudio.stop()
                             this.scene.start('playScene', { player1: this.player1, player2: this.player2 })
                         })
                     })

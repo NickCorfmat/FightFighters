@@ -68,12 +68,10 @@ class Play extends Phaser.Scene {
             scale: { from: 0, to: 5.2 },
             duration: 220,
             ease: 'Linear',
-            onStart: () => {
-                this.playMusic.play()
-            },
             onComplete: () => {
                 this.time.delayedCall(1000, () => {
                     this.gameStart = true // start game
+                    this.playMusic.play()
                     this.fightText.destroy()
                 })
             }
