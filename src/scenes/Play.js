@@ -61,11 +61,22 @@ class Play extends Phaser.Scene {
         // beginning 'FIGHT' sequence
         this.fightSFX.play()
 
-        this.fightText = this.add.sprite(width/2, height/2, 'FIGHT').setOrigin(0.5).setScale(5)
-        this.time.delayedCall(1000, () => {
-            this.gameStart = true // start game
-            this.fightText.destroy()
-            this.playMusic.play()
+        this.fightText = this.add.sprite(width/2, height/2, 'FIGHT').setOrigin(0.5).setScale(0)
+
+        this.tweens.add({
+            targets: this.fightText,
+            scale: { from: 0, to: 5.2 },
+            duration: 220,
+            ease: 'Linear',
+            onStart: () => {
+                this.playMusic.play()
+            },
+            onComplete: () => {
+                this.time.delayedCall(1000, () => {
+                    this.gameStart = true // start game
+                    this.fightText.destroy()
+                })
+            }
         })
     }
 
