@@ -21,12 +21,13 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
 
         // sprite configs
         this.body.setSize(60, 110)
-        this.body.setOffset(25, 90)
+        this.body.setOffset(75, 90)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
         this.body.setMaxVelocity(this.MAX_VELOCITY_X, this.MAX_VELOCITY_Y)
         this.body.setDragX(this.DRAG)
  
+        // Fighter properties
         this.jumpHeight = -1000
         this.punchCooldown = 150
         this.kickCooldown = 500
@@ -34,6 +35,12 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.jumpTimer = 1000
         this.crouchTimer = 200
         this.hurtTimer = 250
+
+        // Rumble frame data
+        this.currentFrame = 0
+        this.punchFrames = 7
+        this.kickFrames = 8
+        this.fireballFrames = 10
  
         // create health bar
         this.healthBarX = direction == 'left' ? 725 : 150
@@ -63,6 +70,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
 class RumbleIdleState extends State {
     enter(scene, fighter) {
         fighter.body.setVelocity(0)
+        console.log(`idle: ${fighter.direction}`) //TODO
         fighter.anims.play(`rumble-idle-${fighter.direction}`)
     }
  
@@ -135,8 +143,12 @@ class RumbleMoveState extends State {
         // handle movement
         if(left.isDown) {
             fighter.body.setVelocityX(-fighter.MAX_VELOCITY_X)
+            fighter.direction = 'left'
+            console.log(`walk: ${fighter.direction}`) //TODO
         } else if(right.isDown) {
             fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
+            fighter.direction = 'right'
+            console.log(`walk: ${fighter.direction}`) //TODO
         }
 
         fighter.anims.play(`rumble-walk-${fighter.direction}`, true)
@@ -189,11 +201,36 @@ class RumblePunchState extends State {
         // handling: punch attack
         
         fighter.body.setVelocityX(0)
-        fighter.anims.play(`rumble-punch-${fighter.direction}`)
+        //fighter.anims.play(`rumble-punch-${fighter.direction}`)
 
-        scene.time.delayedCall(fighter.punchCooldown, () => {
+        fighter.currentFrame = 0;
+
+        /*scene.time.delayedCall(fighter.punchCooldown, () => {
             this.stateMachine.transition('idle')
-        })
+        })*/
+    }
+
+    execute(scene, fighter) {
+        fighter.setFrame(30 + fighter.currentFrame);
+        console.log(`Frame: ${fighter.currentFrame}`) // TODO
+
+        if (fighter.currentFrame == 1) {
+            // TODO Punch 1 hit (10 damage)
+        }
+
+        if (fighter.currentFrame == 3) {
+            // TODO Cancellable into kick or fireball
+        }
+
+        if (fighter.currentFrame == 4) {
+            // TODO Punch 2 hit (15 damage)
+        }
+
+        if (fighter.currentFrame == fighter.punchFrames) {
+            this.stateMachine.transition('idle');
+        }
+
+        fighter.currentFrame++ //= fighter.currentFrame + 1
     }
 }
  

@@ -93,7 +93,7 @@ class Play extends Phaser.Scene {
             })
         }
  
-        // face players towards each other
+        // face players towards each other //TODO comment this section out to do manual turn around
         if (this.player1.x > this.player2.x) {
             this.player1.direction = 'left'
             this.player2.direction = 'right'
@@ -108,6 +108,6 @@ class Play extends Phaser.Scene {
             this.player2.fsm.step()
         }
 
-        console.log(this.player1.HP)
+        console.log(this.player1.HP) //TODO
     }
 } 

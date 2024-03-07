@@ -37,8 +37,8 @@ class Load extends Phaser.Scene {
         this.load.bitmapFont('fight-font', 'fonts/fight.png', 'fonts/fight.xml')
 
         // Rumble McSkirmish
-        this.load.spritesheet('rumble-left', 'RumbleSpritesheetLeft.png', { frameWidth: 150, frameHeight: 200 })
-        this.load.spritesheet('rumble-right', 'RumbleSpritesheetRight.png', { frameWidth: 150, frameHeight: 200 })
+        this.load.spritesheet('rumble-left', 'RumbleSpritesheetLeft.png', { frameWidth: 200, frameHeight: 200 })
+        this.load.spritesheet('rumble-right', 'RumbleSpritesheetRight.png', { frameWidth: 200, frameHeight: 200 })
         this.load.spritesheet('rumble_winning_spin', 'Rumble_Winning_Spin.png', { frameWidth: 101, frameHeight: 55 })
         this.load.spritesheet('rumble_cutscene_end', 'rumble_cutscene_end.png', { frameWidth: 133, frameHeight: 56 })
         this.load.spritesheet('rumble_cutscene_start', 'rumble_cutscene_start.png', { frameWidth: 133, frameHeight: 56 })
