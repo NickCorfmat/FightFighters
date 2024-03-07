@@ -17,15 +17,15 @@ class HealthBar extends Phaser.GameObjects.Sprite {
     }
 
     decrease (amount) {
-        this.value -= amount
+        this.currentHealth -= amount
 
-        if (this.value < 0) {
-            this.value = 0
+        if (this.currentHealth < 0) {
+            this.currentHealth = 0
         }
 
         this.draw()
 
-        return (this.value === 0)
+        return (this.currentHealth === 0)
     }
 
     draw () {

@@ -19,6 +19,8 @@ class Load extends Phaser.Scene {
         this.load.image('karate-play-text', 'karate_play_text.png')
         this.load.image('rumble-name', 'rumble_mcskirmish_text.png')
         this.load.image('karate-name', 'karate_name_text.png')
+        this.load.image('hitbox', 'hitbox.png')
+
         this.load.atlas('icons', 'character_icons.png', 'icons.json')
         this.load.spritesheet('lock', 'lock.png', { frameWidth: 30, frameHeight: 30 })
         this.load.spritesheet('current-player', 'ui_player_select.png', { frameWidth: 220, frameHeight: 123 })
@@ -135,6 +137,6 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        this.scene.start('menuScene')
+        this.scene.start('playScene')
     }
 }

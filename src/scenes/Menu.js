@@ -151,7 +151,7 @@ class CreditsSelect extends State {
         if(Phaser.Input.Keyboard.JustDown(space)) {
             scene.selectSFX_2.play()
             scene.arrow.destroy()
-            scene.scene.start('playcene')
+            scene.scene.start('creditScene')
         }
     }
 } 

@@ -155,6 +155,14 @@ class KaratePunchState extends State {
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
+
+        // attack collision detection
+        let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox')
+        scene.physics.add.collider(scene.player1, hitbox, () => {
+            scene.player1.HP -= 5
+            scene.player1.healthBar.decrease(5)
+            hitbox.destroy()
+        }, null, scene)
     }
 }
 
@@ -169,6 +177,14 @@ class KarateKickState extends State {
         fighter.once('animationcomplete', () => {
             this.stateMachine.transition('idle')
         })
+
+        // attack collision detection
+        let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox')
+        scene.physics.add.collider(scene.player1, hitbox, () => {
+            scene.player1.HP -= 10
+            scene.player1.healthBar.decrease(10)
+            hitbox.destroy()
+        }, null, scene)
     }
 }
  

@@ -31,11 +31,6 @@ class Play extends Phaser.Scene {
         this.p2Keys.punch = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N)
         this.p2Keys.kick = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
 
-        // temp keys
-        this.keys = this.input.keyboard.createCursorKeys()
-        this.keys.key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
-        this.keys.key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
-
         // add animated background
         this.background = this.add.sprite(0, 0, 'background').setOrigin(0).setScale(2)
         this.background.play('fight-background')
@@ -80,19 +75,21 @@ class Play extends Phaser.Scene {
 
     update() {
         // check if game over
-        if (this.player1.HP <= 0 || Phaser.Input.Keyboard.JustDown(this.keys.key1)) {
+        if (this.player1.HP <= 0) {
+            this.gameStart = false
             this.playMusic.stop()
             this.knockoutSFX.play()
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
             this.time.delayedCall(1800, () => {
-                this.scene.start('rumbleWinnerScene')
+                this.scene.start(`${this.p2}WinnerScene`)
             })
-        } else if (this.player2.HP <= 0 || Phaser.Input.Keyboard.JustDown(this.keys.key2)) {
+        } else if (this.player2.HP <= 0) {
+            this.gameStart = false
             this.playMusic.stop()
             this.knockoutSFX.play()
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
             this.time.delayedCall(1750, () => {
-                this.scene.start('karateWinnerScene')
+                this.scene.start(`${this.p1}WinnerScene`)
             })
         }
  
@@ -110,5 +107,7 @@ class Play extends Phaser.Scene {
             this.player1.fsm.step()
             this.player2.fsm.step()
         }
+
+        console.log(this.player1.HP)
     }
 } 
