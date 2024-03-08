@@ -206,23 +206,26 @@ class RumblePunchState extends State {
         // handling: punch attack
         
         fighter.body.setVelocityX(0)
-        //fighter.anims.play(`rumble-punch-${fighter.direction}`)
+        //fighter.anims.play(`rumble-punch-${fighter.direction}`) //TODO
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
 
-        /*scene.time.delayedCall(fighter.punchCooldown, () => {
+        /*scene.time.delayedCall(fighter.punchCooldown, () => { //TODO
             this.stateMachine.transition('idle')
         })*/
     }
 
     execute(scene, fighter) {
-        const { kick, special } = fighter.keys
+        const { punch, kick, special } = fighter.keys
 
         if (fighter.currentFrame == 0) {
             fighter.buffer = 'empty'
         }else if (fighter.currentFrame < fighter.punchFrames) {
             // TODO buffer moves
+            if(Phaser.Input.Keyboard.JustDown(punch)) {
+                fighter.buffer = 'punch'
+            }
             if(Phaser.Input.Keyboard.JustDown(kick)) {
                 fighter.buffer = 'kick'
             }
@@ -264,7 +267,17 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame == fighter.punchFrames) {
-            this.stateMachine.transition('idle');
+            if (fighter.buffer === 'kick') {
+                this.stateMachine.transition('kick');
+            } else if (fighter.buffer === 'special') {
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+            } else if (fighter.buffer === 'punch') {
+                this.stateMachine.transition('punch');
+            } else {
+                this.stateMachine.transition('idle');
+            }
+            fighter.buffer = 'empty'
             return
         }
 
@@ -279,16 +292,58 @@ class RumbleKickState extends State {
         // handling: kick attack
  
         fighter.body.setVelocity(0)
-        fighter.anims.play(`rumble-kick-${fighter.direction}`)
+        // fighter.anims.play(`rumble-kick-${fighter.direction}`) //TODO
         // switch(fighter.direction) {
         //     case 'left':
         //         break
         //     case 'right':
         //         break
         // }
-        scene.time.delayedCall(fighter.kickCooldown, () => {
-            this.stateMachine.transition('idle')
-        })
+        // scene.time.delayedCall(fighter.kickCooldown, () => { //TODO
+        //     this.stateMachine.transition('idle')
+        // })
+
+        fighter.currentFrame = 0;
+        fighter.attackStartTime = Date.now()
+    }
+
+    execute(scene, fighter) {
+        const { special } = fighter.keys
+
+        if (fighter.currentFrame == 0) {
+            fighter.buffer = 'empty'
+        }else if (fighter.currentFrame < fighter.kickFrames) {
+            // TODO buffer moves
+            if(Phaser.Input.Keyboard.JustDown(special)) {
+                fighter.buffer = 'special'
+            }
+        }
+
+        if (fighter.currentFrame == 3) {
+            // TODO Kick 1 hit (15 damage)
+        }
+
+        if (fighter.currentFrame == 4) { //TODO try 5?
+            // Cancellable into fireball
+            if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
+        }
+
+        if (fighter.currentFrame == 7) {
+            // TODO Kick 2 hit (20 damage)
+        }
+
+        if (fighter.currentFrame == fighter.kickFrames) {
+            this.stateMachine.transition('idle');
+            return
+        }
+
+        fighter.setFrame(35 + fighter.currentFrame);
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
     }
 }
  
