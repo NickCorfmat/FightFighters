@@ -43,6 +43,9 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.punchFrames = 7
         this.kickFrames = 8
         this.fireballFrames = 10
+
+        // Attack buffer
+        this.buffer = 'empty'
  
         // create health bar
         this.healthBarX = direction == 'left' ? 725 : 150
@@ -207,7 +210,6 @@ class RumblePunchState extends State {
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
-        console.log(`time: ${Date.now()}`) //TODO
 
         /*scene.time.delayedCall(fighter.punchCooldown, () => {
             this.stateMachine.transition('idle')
@@ -215,28 +217,58 @@ class RumblePunchState extends State {
     }
 
     execute(scene, fighter) {
+        const { kick, special } = fighter.keys
+
+        if (fighter.currentFrame == 0) {
+            fighter.buffer = 'empty'
+        }else if (fighter.currentFrame < fighter.punchFrames) {
+            // TODO buffer moves
+            if(Phaser.Input.Keyboard.JustDown(kick)) {
+                fighter.buffer = 'kick'
+            }
+            if(Phaser.Input.Keyboard.JustDown(special)) {
+                fighter.buffer = 'special'
+            }
+        }
+
         if (fighter.currentFrame == 1) {
             // TODO Punch 1 hit (10 damage)
         }
 
         if (fighter.currentFrame == 3) {
-            // TODO Cancellable into kick or fireball
+            // Cancellable into kick or fireball
+            if (fighter.buffer === 'kick') {
+                fighter.buffer = 'empty'
+                this.stateMachine.transition('kick');
+                return
+            } else if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
         }
 
         if (fighter.currentFrame == 4) {
             // TODO Punch 2 hit (15 damage)
         }
 
-        if (fighter.currentFrame == fighter.punchFrames) {
-            console.log(`move finishing`) // TODO
-            this.stateMachine.transition('idle');
-            console.log(`move done`) //TODO
-        } else {
-            fighter.setFrame(28 + fighter.currentFrame);
-            console.log(`Frame: ${fighter.currentFrame} (${28 + fighter.currentFrame})`) // TODO
+        if (fighter.currentFrame > 4 && fighter.currentFrame < fighter.punchFrames) {
+            // Cancellable into fireball
+            if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
         }
 
-        fighter.currentFrame = fighter.currentFrame + 1
+        if (fighter.currentFrame == fighter.punchFrames) {
+            this.stateMachine.transition('idle');
+            return
+        }
+
+        fighter.setFrame(28 + fighter.currentFrame);
         fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
     }
 }
