@@ -23,6 +23,7 @@ class Play extends Phaser.Scene {
         this.p1Keys.jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.p1Keys.punch = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C)
         this.p1Keys.kick = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V)
+        this.p1Keys.special = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT) //TODO
  
         // player 2 keyboard input
         this.p2Keys.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
@@ -30,6 +31,7 @@ class Play extends Phaser.Scene {
         this.p2Keys.jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
         this.p2Keys.punch = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N)
         this.p2Keys.kick = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M)
+        this.p2Keys.special = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.COMMA) //TODO
 
         // add animated background
         this.background = this.add.sprite(0, 0, 'background').setOrigin(0).setScale(2)
