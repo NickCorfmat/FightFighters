@@ -38,6 +38,8 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
 
         // Rumble frame data
         this.currentFrame = 0
+        this.attackStartTime = 0
+        this.fps = 12
         this.punchFrames = 7
         this.kickFrames = 8
         this.fireballFrames = 10
@@ -204,6 +206,8 @@ class RumblePunchState extends State {
         //fighter.anims.play(`rumble-punch-${fighter.direction}`)
 
         fighter.currentFrame = 0;
+        fighter.attackStartTime = Date.now()
+        console.log(`time: ${Date.now()}`) //TODO
 
         /*scene.time.delayedCall(fighter.punchCooldown, () => {
             this.stateMachine.transition('idle')
@@ -211,9 +215,6 @@ class RumblePunchState extends State {
     }
 
     execute(scene, fighter) {
-        fighter.setFrame(30 + fighter.currentFrame);
-        console.log(`Frame: ${fighter.currentFrame}`) // TODO
-
         if (fighter.currentFrame == 1) {
             // TODO Punch 1 hit (10 damage)
         }
@@ -227,10 +228,16 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame == fighter.punchFrames) {
+            console.log(`move finishing`) // TODO
             this.stateMachine.transition('idle');
+            console.log(`move done`) //TODO
+        } else {
+            fighter.setFrame(28 + fighter.currentFrame);
+            console.log(`Frame: ${fighter.currentFrame} (${28 + fighter.currentFrame})`) // TODO
         }
 
-        fighter.currentFrame++ //= fighter.currentFrame + 1
+        fighter.currentFrame = fighter.currentFrame + 1
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
     }
 }
  
