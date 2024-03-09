@@ -1,4 +1,3 @@
-
 "use strict"
 
 // define and configure game object
@@ -15,13 +14,13 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: false
         }
     },
     scene: [ Load, Tutorial, Credits, Menu, Cutscene, Select, Play, RumbleWinner, KarateWinner ]
 }
 
-// define game
+// define game\
 let game = new Phaser.Game(config)
 
 // define globals
