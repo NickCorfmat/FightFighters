@@ -110,6 +110,6 @@ class Play extends Phaser.Scene {
             this.player2.fsm.step()
         }
 
-        console.log(this.player1.HP) //TODO
+        // console.log(this.player1.HP) //TODO
     }
 } 

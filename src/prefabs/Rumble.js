@@ -43,6 +43,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.punchFrames = 7
         this.kickFrames = 8
         this.fireballFrames = 10
+        this.justHit = false
 
         // Attack buffer
         this.buffer = 'empty'
@@ -75,7 +76,6 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
 class RumbleIdleState extends State {
     enter(scene, fighter) {
         fighter.body.setVelocity(0)
-        console.log(`idle: ${fighter.direction}`) //TODO
         fighter.anims.play(`rumble-idle-${fighter.direction}`)
     }
  
@@ -149,11 +149,9 @@ class RumbleMoveState extends State {
         if(left.isDown) {
             fighter.body.setVelocityX(-fighter.MAX_VELOCITY_X)
             fighter.direction = 'left'
-            console.log(`walk: ${fighter.direction}`) //TODO
         } else if(right.isDown) {
             fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
             fighter.direction = 'right'
-            console.log(`walk: ${fighter.direction}`) //TODO
         }
 
         fighter.anims.play(`rumble-walk-${fighter.direction}`, true)
@@ -211,6 +209,8 @@ class RumblePunchState extends State {
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
 
+        fighter.anims.play(`rumble-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+
         /*scene.time.delayedCall(fighter.punchCooldown, () => { //TODO
             this.stateMachine.transition('idle')
         })*/
@@ -234,6 +234,17 @@ class RumblePunchState extends State {
 
         if (fighter.currentFrame == 1) {
             // TODO Punch 1 hit (10 damage)
+            let hitbox = new Hitbox(scene, fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 325, 'hitbox', 0, 160, 60)
+            scene.physics.add.collider(scene.player2, hitbox, () => {
+                scene.player2.HP -= 10
+                scene.player2.healthBar.decrease(10)
+                console.log('hit')
+                hitbox.destroy()
+            }, null, scene)
+            // if (hitbox) {
+            //     console.log('miss')
+            //     hitbox.destroy()
+            // }
         }
 
         if (fighter.currentFrame == 3) {
@@ -252,6 +263,7 @@ class RumblePunchState extends State {
 
         if (fighter.currentFrame == 4) {
             // TODO Punch 2 hit (15 damage)
+            //let hitbox = new Hitbox(scene, fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 350, 'hitbox', 0, 160, 60)
         }
 
         if (fighter.currentFrame > 4 && fighter.currentFrame < fighter.punchFrames) {
@@ -303,6 +315,8 @@ class RumbleKickState extends State {
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
+
+        fighter.anims.play(`rumble-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
     }
 
     execute(scene, fighter) {

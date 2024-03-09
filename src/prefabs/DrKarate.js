@@ -157,12 +157,12 @@ class KaratePunchState extends State {
         })
 
         // attack collision detection
-        let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox')
+        /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
         scene.physics.add.collider(scene.player1, hitbox, () => {
             scene.player1.HP -= 5
             scene.player1.healthBar.decrease(5)
             hitbox.destroy()
-        }, null, scene)
+        }, null, scene)*/
     }
 }
 
@@ -179,12 +179,12 @@ class KarateKickState extends State {
         })
 
         // attack collision detection
-        let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox')
+        /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
         scene.physics.add.collider(scene.player1, hitbox, () => {
             scene.player1.HP -= 10
             scene.player1.healthBar.decrease(10)
             hitbox.destroy()
-        }, null, scene)
+        }, null, scene)*/
     }
 }
  
