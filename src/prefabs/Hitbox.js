@@ -6,11 +6,19 @@ class Hitbox extends Phaser.GameObjects.Sprite {
         scene.add.existing(this)          // add to existing, displayList, updateList
         scene.physics.add.existing(this)  // add physics
 
+        this.x = x
+        this.y = y
+
         this.width = width;
         this.height = height;
 
         this.body.setSize(this.width, this.height)
         this.body.setImmovable(true)
         this.alpha = 0
+    }
+
+    setPosition(x, y) {
+        this.x = x
+        this.y = y
     }
 }

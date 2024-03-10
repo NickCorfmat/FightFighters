@@ -36,6 +36,9 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.crouchTimer = 200
         this.hurtTimer = 250
 
+        // Hitboxes
+        this.punch1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -80 : 80), this.y + 325, 'hitbox', 0, 160, 60)
+
         // Rumble frame data
         this.currentFrame = 0
         this.attackStartTime = 0
@@ -208,6 +211,7 @@ class RumblePunchState extends State {
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
+        fighter.justHit = false
 
         fighter.anims.play(`rumble-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
 
@@ -218,6 +222,8 @@ class RumblePunchState extends State {
 
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
+
+        // fighter.punch1HB.body.enable = false
 
         if (fighter.currentFrame < fighter.punchFrames) {
             // TODO buffer moves
@@ -233,18 +239,26 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame == 1) {
-            // TODO Punch 1 hit (10 damage)
-            let hitbox = new Hitbox(scene, fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 325, 'hitbox', 0, 160, 60)
-            scene.physics.add.collider(scene.player2, hitbox, () => {
-                scene.player2.HP -= 10
-                scene.player2.healthBar.decrease(10)
-                console.log('hit')
-                hitbox.destroy()
-            }, null, scene)
-            // if (hitbox) {
-            //     console.log('miss')
-            //     hitbox.destroy()
-            // }
+            // TODO Punch 1 hit (5 damage)
+            // let hitbox = new Hitbox(scene, fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 325, 'hitbox', 0, 160, 60)
+            if (!fighter.justHit) {
+                // fighter.punch1HB.body.enable = true
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 325)
+                scene.physics.add.collider(scene.player2, fighter.punch1HB, () => {
+                    if (!fighter.justHit) {
+                        scene.player2.HP -= 5
+                        scene.player2.healthBar.decrease(5)
+                        console.log('hit 1')
+                        fighter.justHit = true
+                    }
+                    // fighter.punch1HB.destroy()
+                    fighter.punch1HB.setPosition(-100, -100)
+                }, null, scene)
+            }
+        }
+
+        if (fighter.currentFrame == 2) {
+            fighter.justHit = false
         }
 
         if (fighter.currentFrame == 3) {
@@ -264,6 +278,20 @@ class RumblePunchState extends State {
         if (fighter.currentFrame == 4) {
             // TODO Punch 2 hit (15 damage)
             //let hitbox = new Hitbox(scene, fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 350, 'hitbox', 0, 160, 60)
+            if (!fighter.justHit) {
+                // fighter.punch1HB.body.enable = true
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 350)
+                scene.physics.add.collider(scene.player2, fighter.punch1HB, () => {
+                    if (!fighter.justHit) {
+                        scene.player2.HP -= 10
+                        scene.player2.healthBar.decrease(10)
+                        console.log('hit 2')
+                        fighter.justHit = true
+                    }
+                    // fighter.punch1HB.destroy()
+                    fighter.punch1HB.setPosition(-100, -100)
+                }, null, scene)
+            }
         }
 
         if (fighter.currentFrame > 4 && fighter.currentFrame < fighter.punchFrames) {
