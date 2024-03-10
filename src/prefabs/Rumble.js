@@ -1,6 +1,6 @@
 // Rumble McSkirmish prefab
 class Rumble extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
+    constructor(scene, x, y, texture, frame, direction, keys, health, speed, opponent) {
         super(scene, x, y, texture, frame)
 
         scene.add.existing(this).setScale(3).setOrigin(0.5, 0)
@@ -11,6 +11,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.HP = health
         this.fighterVelocity = speed
         this.direction = direction
+        this.opponent = opponent
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -37,10 +38,10 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.hurtTimer = 250
 
         // Hitboxes
-        this.punch1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -80 : 80), this.y + 340, 'punch1HB', 0, 180, 60)
-        this.punch2HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -80 : 80), this.y + 365, 'punch2HB', 0, 200, 60)
-        this.kick1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -80 : 80), this.y + 375, 'kick1HB', 0, 150, 60)
-        this.kick2HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -80 : 80), this.y + 400, 'kick1HB', 0, 175, 60)
+        this.punch1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -225 : 80), this.y + 340, 'punch1HB', 0, 180, 60)
+        this.punch2HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -250 : 80), this.y + 365, 'punch2HB', 0, 200, 60)
+        this.kick1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -200 : 80), this.y + 375, 'kick1HB', 0, 150, 60)
+        this.kick2HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -225 : 80), this.y + 400, 'kick2HB', 0, 175, 60)
 
         // Rumble frame data
         this.currentFrame = 0
@@ -244,11 +245,11 @@ class RumblePunchState extends State {
         if (fighter.currentFrame == 1) {
             // TODO Punch 1 hit (5 damage)
             if (!fighter.justHit) {
-                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 340)
-                scene.physics.add.collider(scene.player2, fighter.punch1HB, () => {
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -225 : 80), fighter.y + 340)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch1HB, () => {
                     if (!fighter.justHit) {
-                        scene.player2.HP -= 5
-                        scene.player2.healthBar.decrease(5)
+                        scene[`player${fighter.opponent}`].HP -= 5
+                        scene[`player${fighter.opponent}`].healthBar.decrease(5)
                         console.log('hit 1')
                         fighter.justHit = true
                     }
@@ -279,11 +280,11 @@ class RumblePunchState extends State {
         if (fighter.currentFrame == 4) {
             // TODO Punch 2 hit (10 damage)
             if (!fighter.justHit) {
-                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 365)
-                scene.physics.add.collider(scene.player2, fighter.punch2HB, () => {
+                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 80), fighter.y + 365)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch2HB, () => {
                     if (!fighter.justHit) {
-                        scene.player2.HP -= 10
-                        scene.player2.healthBar.decrease(10)
+                        scene[`player${fighter.opponent}`].HP -= 10
+                        scene[`player${fighter.opponent}`].healthBar.decrease(10)
                         console.log('hit 2')
                         fighter.justHit = true
                     }
@@ -375,11 +376,11 @@ class RumbleKickState extends State {
         if (fighter.currentFrame == 3) {
             // TODO Kick 1 hit (15 damage)
             if (!fighter.justHit) {
-                fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 375)
-                scene.physics.add.collider(scene.player2, fighter.kick1HB, () => {
+                fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -200 : 80), fighter.y + 375)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kick1HB, () => {
                     if (!fighter.justHit) {
-                        scene.player2.HP -= 15
-                        scene.player2.healthBar.decrease(15)
+                        scene[`player${fighter.opponent}`].HP -= 15
+                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
                         console.log('hit 1')
                         fighter.justHit = true
                     }
@@ -406,11 +407,11 @@ class RumbleKickState extends State {
         if (fighter.currentFrame == 7) {
             // TODO Kick 2 hit (20 damage)
             if (!fighter.justHit) {
-                fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -80 : 80), fighter.y + 400)
-                scene.physics.add.collider(scene.player2, fighter.kick2HB, () => {
+                fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -225 : 80), fighter.y + 400)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kick2HB, () => {
                     if (!fighter.justHit) {
-                        scene.player2.HP -= 20
-                        scene.player2.healthBar.decrease(20)
+                        scene[`player${fighter.opponent}`].HP -= 20
+                        scene[`player${fighter.opponent}`].healthBar.decrease(20)
                         console.log('hit 2')
                         fighter.justHit = true
                     }

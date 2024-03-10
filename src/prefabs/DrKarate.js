@@ -1,7 +1,8 @@
-// Dr. Karate McSkirmish prefab
+// Dr. Karate prefab
 class DrKarate extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, frame, direction, keys, health, speed) {
+    constructor(scene, x, y, texture, frame, direction, keys, health, speed, opponent) {
         super(scene, x, y, texture, frame)
+
         scene.add.existing(this).setScale(2.85).setOrigin(0.5, 0)
         scene.physics.add.existing(this).setScale(2.85).setOrigin(0.5, 0)
 
@@ -10,6 +11,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.HP = health
         this.fighterVelocity = speed
         this.direction = direction
+        this.opponent = opponent
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -20,10 +22,13 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
        
         // sprite configs
         this.body.setSize(60, 115)
-        this.body.setOffset(70, 20)
+        this.body.setOffset(95, 20)
         this.body.setGravityY(2000)
         this.body.setCollideWorldBounds(true)
+        this.body.setMaxVelocity(this.MAX_VELOCITY_X, this.MAX_VELOCITY_Y)
+        this.body.setDragX(this.DRAG)
 
+        //Fighter properties
         this.jumpHeight = -1000
         this.punchCooldown = 150
         this.kickCooldown = 500
@@ -31,6 +36,25 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.jumpTimer = 500
         this.crouchTimer = 200
         this.hurtTimer = 250
+
+        // Hitboxes
+        this.punch1HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -225 : 80), this.y + 340, 'punch1HB', 0, 180, 60)
+        this.punch2HB = new Hitbox(scene, this.x + (this.direction === 'left' ? -250 : 80), this.y + 365, 'punch2HB', 0, 200, 60)
+        this.kickHB = new Hitbox(scene, this.x + (this.direction === 'left' ? -200 : 80), this.y + 375, 'kick1HB', 0, 150, 60)
+
+        // Dr. Karate frame data
+        this.currentFrame = 0
+        this.attackStartTime = 0
+        this.fps = 12
+        this.punchFrames = 7
+        this.punchEndlag = 3
+        this.kickFrames = 8
+        this.kickEndlag = 5
+        this.fireballFrames = 10
+        this.justHit = false
+
+        // Attack buffer
+        this.buffer = 'empty'
 
         // create health bar
         this.healthBarX = direction == 'left' ? 725 : 150
@@ -126,8 +150,10 @@ class KarateMoveState extends State {
         // handle movement
         if(left.isDown) {
             fighter.body.setVelocityX(-fighter.MAX_VELOCITY_X)
+            fighter.direction = 'left'
         } else if(right.isDown) {
             fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
+            fighter.direction = 'right'
         }
 
         fighter.anims.play(`karate-walk-${fighter.direction}`, true)
@@ -135,12 +161,50 @@ class KarateMoveState extends State {
 }
  
 class KarateJumpState extends State {
+    // enter(scene, fighter) {
+    //     fighter.setVelocityY(fighter.jumpHeight)
+    //     fighter.anims.play(`karate-walk-${fighter.direction}`)
+    //     scene.time.delayedCall(fighter.jumpTimer, () => {
+    //         this.stateMachine.transition('idle')
+    //     })
+    // }
+
     enter(scene, fighter) {
-        fighter.setVelocityY(fighter.jumpHeight)
-        fighter.anims.play(`karate-walk-${fighter.direction}`)
-        scene.time.delayedCall(fighter.jumpTimer, () => {
+        // update fighter position and play proper animation
+        fighter.body.setVelocityY(fighter.jumpHeight)
+        // fighter.anims.play(`karate-jump-${fighter.direction}`) //TODO
+    }
+ 
+    execute(scene, fighter) {
+        // transitions: idle, move, punch, kick, fireball, hurt, death
+        // handling: vertical jump
+
+        // create local copy keyboard object
+        const { left, right, punch, kick } = fighter.keys
+
+        // check if fighter is grounded
+        if (fighter.body.touching.down || fighter.body.blocked.down) {
             this.stateMachine.transition('idle')
-        })
+        }
+
+        // handle movement
+        if(left.isDown) {
+            fighter.body.setVelocityX(-fighter.MAX_VELOCITY_X)
+        } else if(right.isDown) {
+            fighter.body.setVelocityX(fighter.MAX_VELOCITY_X)
+        }
+ 
+        // transition to punch
+        if(Phaser.Input.Keyboard.JustDown(punch)) {
+            this.stateMachine.transition('punch')
+            return
+        }
+ 
+        // transition to kick
+        if(Phaser.Input.Keyboard.JustDown(kick)) {
+            this.stateMachine.transition('kick')
+            return
+        }
     }
 }
  

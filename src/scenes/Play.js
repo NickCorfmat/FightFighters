@@ -52,8 +52,8 @@ class Play extends Phaser.Scene {
         }
  
         // add new fighters to scene (scene, x, y, texture, frame, facing direction, keyboard input, health, speed)
-        this.player1 = new (character[this.p1])(this, 420, 600, `${this.p1}-right`, 0, 'right', this.p1Keys, 100, 500)
-        this.player2 = new (character[this.p2])(this, 880, 600, `${this.p2}-left`, 0, 'left', this.p2Keys, 100, 500)
+        this.player1 = new (character[this.p1])(this, 420, 600, `${this.p1}-right`, 0, 'right', this.p1Keys, 100, 500, 2)
+        this.player2 = new (character[this.p2])(this, 880, 600, `${this.p2}-left`, 0, 'left', this.p2Keys, 100, 500, 1)
  
         // beginning 'FIGHT' sequence
         this.fightSFX.play()
@@ -96,13 +96,13 @@ class Play extends Phaser.Scene {
         }
  
         // face players towards each other //TODO comment this section out to do manual turn around
-        if (this.player1.x > this.player2.x) {
-            this.player1.direction = 'left'
-            this.player2.direction = 'right'
-        } else {
-            this.player2.direction = 'left'
-            this.player1.direction = 'right'
-        }
+        // if (this.player1.x > this.player2.x) {
+        //     this.player1.direction = 'left'
+        //     this.player2.direction = 'right'
+        // } else {
+        //     this.player2.direction = 'left'
+        //     this.player1.direction = 'right'
+        // }
  
         // handle playing state
         if (this.gameStart) {
