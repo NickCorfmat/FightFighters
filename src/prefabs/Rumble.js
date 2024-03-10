@@ -309,7 +309,7 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
-            fighter.setFrame(fighter.currentFrame);
+            fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
         } else {
             fighter.setFrame(28 + fighter.currentFrame);
         }
@@ -426,7 +426,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame >= fighter.kickFrames && fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
-            fighter.setFrame(fighter.currentFrame);
+            fighter.setFrame(fighter.currentFrame/* - fighter.kickFrames*/);
         } else {
             fighter.setFrame(35 + fighter.currentFrame);
         }

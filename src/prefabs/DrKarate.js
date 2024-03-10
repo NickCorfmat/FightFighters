@@ -46,10 +46,10 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.currentFrame = 0
         this.attackStartTime = 0
         this.fps = 12
-        this.punchFrames = 7
-        this.punchEndlag = 3
+        this.punchFrames = 10
+        this.punchEndlag = 4
         this.kickFrames = 8
-        this.kickEndlag = 5
+        this.kickEndlag = 3
         this.fireballFrames = 10
         this.justHit = false
 
@@ -209,24 +209,143 @@ class KarateJumpState extends State {
 }
  
 class KaratePunchState extends State {
+    // enter(scene, fighter) {
+    //     // transitions: idle
+    //     // handling: kick attack
+ 
+    //     fighter.setVelocity(0)
+    //     fighter.anims.play(`karate-punch-${fighter.direction}`)
+ 
+    //     fighter.once('animationcomplete', () => {
+    //         this.stateMachine.transition('idle')
+    //     })
+
+    //     // attack collision detection
+    //     /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
+    //     scene.physics.add.collider(scene.player1, hitbox, () => {
+    //         scene.player1.HP -= 5
+    //         scene.player1.healthBar.decrease(5)
+    //         hitbox.destroy()
+    //     }, null, scene)*/
+    // }
+
     enter(scene, fighter) {
         // transitions: idle
-        // handling: kick attack
- 
-        fighter.setVelocity(0)
-        fighter.anims.play(`karate-punch-${fighter.direction}`)
- 
-        fighter.once('animationcomplete', () => {
-            this.stateMachine.transition('idle')
-        })
+        // handling: punch attack
+        
+        fighter.body.setVelocityX(0)
 
-        // attack collision detection
-        /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
-        scene.physics.add.collider(scene.player1, hitbox, () => {
-            scene.player1.HP -= 5
-            scene.player1.healthBar.decrease(5)
-            hitbox.destroy()
-        }, null, scene)*/
+        fighter.currentFrame = 0;
+        fighter.attackStartTime = Date.now()
+        fighter.justHit = false
+
+        fighter.anims.play(`karate-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+    }
+
+    execute(scene, fighter) {
+        const { punch, kick, special } = fighter.keys
+
+        if (fighter.currentFrame < fighter.punchFrames) {
+            // TODO buffer moves
+            if(Phaser.Input.Keyboard.JustDown(punch)) {
+                fighter.buffer = 'punch'
+            }
+            if(Phaser.Input.Keyboard.JustDown(kick)) {
+                fighter.buffer = 'kick'
+            }
+            if(Phaser.Input.Keyboard.JustDown(special)) {
+                fighter.buffer = 'special'
+            }
+        }
+
+        if (fighter.currentFrame == 0 || fighter.currentFrame == 1) {
+            // TODO Punch 1 hit (10 damage)
+            if (!fighter.justHit) {
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 130)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch1HB, () => {
+                    if (!fighter.justHit) {
+                        scene[`player${fighter.opponent}`].HP -= 10
+                        scene[`player${fighter.opponent}`].healthBar.decrease(10)
+                        console.log('hit 1')
+                        fighter.justHit = true
+                    }
+                    fighter.punch1HB.disableHit()
+                }, null, scene)
+            }
+        }
+
+        if (fighter.currentFrame == 2) {
+            fighter.justHit = false
+            fighter.punch1HB.disableHit()
+        }
+
+        if (fighter.currentFrame == 3) {
+            // Cancellable into kick or special
+            if (fighter.buffer === 'kick') {
+                fighter.buffer = 'empty'
+                this.stateMachine.transition('kick');
+                return
+            } else if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('specialing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
+        }
+
+        if (fighter.currentFrame == 4 || fighter.currentFrame == 5) {
+            // TODO Punch 2 hit (15 damage)
+            if (!fighter.justHit) {
+                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 80), fighter.y + 130)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch2HB, () => {
+                    if (!fighter.justHit) {
+                        scene[`player${fighter.opponent}`].HP -= 15
+                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                        console.log('hit 2')
+                        fighter.justHit = true
+                    }
+                    fighter.punch2HB.disableHit()
+                }, null, scene)
+            }
+        }
+
+        if (fighter.currentFrame == 6) {
+            fighter.justHit = false
+            fighter.punch2HB.disableHit()
+        }
+
+        if (fighter.currentFrame > 5 && fighter.currentFrame < fighter.punchFrames) {
+            // Cancellable into special
+            if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('specialing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
+        }
+
+        if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
+            fighter.setFrame(fighter.currentFrame - fighter.punchFrames);
+        } else {
+            fighter.setFrame(12 + fighter.currentFrame);
+        }
+
+        if (fighter.currentFrame == fighter.punchFrames + fighter.punchEndlag) {
+            if (fighter.buffer === 'kick') {
+                this.stateMachine.transition('kick');
+            } else if (fighter.buffer === 'special') {
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+            } else if (fighter.buffer === 'punch') {
+                this.stateMachine.transition('punch');
+            } else {
+                this.stateMachine.transition('idle');
+            }
+            fighter.buffer = 'empty'
+            return
+        }
+
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
     }
 }
 
