@@ -245,7 +245,7 @@ class KaratePunchState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
-        if (fighter.currentFrame < fighter.punchFrames) {
+        if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
@@ -326,7 +326,7 @@ class KaratePunchState extends State {
 
         if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             fighter.setFrame(fighter.currentFrame - fighter.punchFrames);
-        } else {
+        } else if (fighter.currentFrame < fighter.punchFrames) {
             fighter.setFrame(12 + fighter.currentFrame);
         }
 
@@ -350,24 +350,117 @@ class KaratePunchState extends State {
 }
 
 class KarateKickState extends State {
+    // enter(scene, fighter) {
+    //     // transitions: idle
+    //     // handling: kick attack
+        
+    //     fighter.setVelocity(0)
+    //     fighter.anims.play(`karate-kick-${fighter.direction}`)
+
+    //     fighter.once('animationcomplete', () => {
+    //         this.stateMachine.transition('idle')
+    //     })
+
+    //     // attack collision detection
+    //     /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
+    //     scene.physics.add.collider(scene.player1, hitbox, () => {
+    //         scene.player1.HP -= 10
+    //         scene.player1.healthBar.decrease(10)
+    //         hitbox.destroy()
+    //     }, null, scene)*/
+    // }
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
-        
-        fighter.setVelocity(0)
-        fighter.anims.play(`karate-kick-${fighter.direction}`)
+ 
+        fighter.body.setVelocity(0)
+        // fighter.anims.play(`rumble-kick-${fighter.direction}`) //TODO
+        // switch(fighter.direction) {
+        //     case 'left':
+        //         break
+        //     case 'right':
+        //         break
+        // }
+        // scene.time.delayedCall(fighter.kickCooldown, () => { //TODO
+        //     this.stateMachine.transition('idle')
+        // })
 
-        fighter.once('animationcomplete', () => {
-            this.stateMachine.transition('idle')
-        })
+        fighter.currentFrame = 0;
+        fighter.attackStartTime = Date.now()
+        fighter.justHit = false
 
-        // attack collision detection
-        /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
-        scene.physics.add.collider(scene.player1, hitbox, () => {
-            scene.player1.HP -= 10
-            scene.player1.healthBar.decrease(10)
-            hitbox.destroy()
-        }, null, scene)*/
+        fighter.anims.play(`karate-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+    }
+
+    execute(scene, fighter) {
+        const { punch, kick, special } = fighter.keys
+
+        if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
+            // TODO buffer moves
+            if(Phaser.Input.Keyboard.JustDown(punch)) {
+                fighter.buffer = 'punch'
+            }
+            if(Phaser.Input.Keyboard.JustDown(kick)) {
+                fighter.buffer = 'kick'
+            }
+            if(Phaser.Input.Keyboard.JustDown(special)) {
+                fighter.buffer = 'special'
+            }
+        }
+
+        if (fighter.currentFrame == 2) {
+            // TODO Kick 1 hit (15 damage)
+            if (!fighter.justHit) {
+                fighter.kickHB.setPosition(fighter.x + (fighter.direction === 'left' ? -210 : 80), fighter.y + 175)
+                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kickHB, () => {
+                    if (!fighter.justHit) {
+                        scene[`player${fighter.opponent}`].HP -= 15
+                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                        console.log('hit 1')
+                        fighter.justHit = true
+                    }
+                    fighter.kickHB.disableHit()
+                }, null, scene)
+            }
+        }
+
+        if (fighter.currentFrame == 3) {
+            fighter.justHit = false
+            fighter.kickHB.disableHit()
+        }
+
+        if (fighter.currentFrame == 4) { // TODO try 5
+            // Cancellable into fireball
+            if (fighter.buffer === 'special') {
+                fighter.buffer = 'empty'
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle');
+                return
+            }
+        }
+
+        if (fighter.currentFrame >= fighter.kickFrames && fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
+            fighter.setFrame(fighter.currentFrame - fighter.kickFrames);
+        } else if (fighter.currentFrame < fighter.kickFrames) {
+            fighter.setFrame(22 + fighter.currentFrame);
+        }
+
+        if (fighter.currentFrame == fighter.kickFrames + fighter.kickEndlag) {
+            if (fighter.buffer === 'kick') {
+                this.stateMachine.transition('kick');
+            } else if (fighter.buffer === 'special') {
+                console.log('specialing rn') //TODO
+                this.stateMachine.transition('idle');
+            } else if (fighter.buffer === 'punch') {
+                this.stateMachine.transition('punch');
+            } else {
+                this.stateMachine.transition('idle');
+            }
+            fighter.buffer = 'empty'
+            return
+        }
+
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
     }
 }
  

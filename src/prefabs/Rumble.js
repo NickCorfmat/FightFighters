@@ -229,7 +229,7 @@ class RumblePunchState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
-        if (fighter.currentFrame < fighter.punchFrames) {
+        if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
@@ -310,7 +310,7 @@ class RumblePunchState extends State {
 
         if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
-        } else {
+        } else if (fighter.currentFrame < fighter.punchFrames) {
             fighter.setFrame(28 + fighter.currentFrame);
         }
 
@@ -360,7 +360,7 @@ class RumbleKickState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
-        if (fighter.currentFrame < fighter.punchFrames) {
+        if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
@@ -427,7 +427,7 @@ class RumbleKickState extends State {
 
         if (fighter.currentFrame >= fighter.kickFrames && fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
             fighter.setFrame(fighter.currentFrame/* - fighter.kickFrames*/);
-        } else {
+        } else if (fighter.currentFrame < fighter.kickFrames) {
             fighter.setFrame(35 + fighter.currentFrame);
         }
 
