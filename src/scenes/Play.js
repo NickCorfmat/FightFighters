@@ -76,6 +76,12 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        // handle playing state
+        if (this.gameStart) {
+            this.player1.fsm.step()
+            this.player2.fsm.step()
+        }
+
         // check if game over
         if (this.player1.HP <= 0) {
             this.gameStart = false
@@ -103,12 +109,6 @@ class Play extends Phaser.Scene {
         //     this.player2.direction = 'left'
         //     this.player1.direction = 'right'
         // }
- 
-        // handle playing state
-        if (this.gameStart) {
-            this.player1.fsm.step()
-            this.player2.fsm.step()
-        }
 
         // console.log(this.player1.HP) //TODO
     }

@@ -50,7 +50,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.punchFrames = 7
         this.punchEndlag = 3
         this.kickFrames = 8
-        this.kickEndlag = 5
+        this.kickEndlag = 4
         this.fireballFrames = 10
         this.justHit = false
 
@@ -117,6 +117,10 @@ class RumbleIdleState extends State {
         if(left.isDown || right.isDown) {
             this.stateMachine.transition('walk')
             return
+        }
+
+        if (fighter.HP <= 0) {
+            this.stateMachine.transition('death')
         }
     }
 }
@@ -453,7 +457,10 @@ class RumbleKickState extends State {
 class RumbleDeathState extends State {
     enter(scene, fighter) {
         fighter.body.setVelocity(0)
-        fighter.anims.play(`die-${fighter.direction}`)
-        fighter.anims.stop()
+        fighter.anims.play(`rumble-death-${fighter.direction}`)
+        fighter.once('animationcomplete', () => {
+            fighter.anims.play(`rumble-dead-${fighter.direction}`)
+        })
+        //fighter.anims.stop()
     }
 } 

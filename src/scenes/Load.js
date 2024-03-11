@@ -116,8 +116,10 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'rumble-punch-right', frameRate: 10, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 29, end: 35 }) })
         this.anims.create({ key: 'rumble-kick-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 36, end: 43 }) })
         this.anims.create({ key: 'rumble-kick-right', frameRate: 14, repeat: 0,frames: this.anims.generateFrameNumbers('rumble-right', { start: 36, end: 43 }) })
-        this.anims.create({ key: 'rumble-death-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 54, end: 62 }) })
-        this.anims.create({ key: 'rumble-death-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 54, end: 62 }) })
+        this.anims.create({ key: 'rumble-death-left', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-left', { start: 54, end: 61 }) })
+        this.anims.create({ key: 'rumble-dead-left', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-left', { start: 61, end: 61 }) })
+        this.anims.create({ key: 'rumble-death-right', frameRate: 12, repeat: 0, frames: this.anims.generateFrameNumbers('rumble-right', { start: 54, end: 61 }) })
+        this.anims.create({ key: 'rumble-dead-right', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('rumble-right', { start: 61, end: 61 }) })
 
         this.anims.create({ key: 'rumble-spin', frameRate: 7, repeat: 1, frames: this.anims.generateFrameNumbers('rumble_winning_spin', { start: 0, end: 7 }) })
         this.anims.create({ key: 'rumble-speech', frameRate: 10, repeat: 0, frames: this.anims.generateFrameNumbers('rumble_catchphrase', { start: 0, end: 12 }) })

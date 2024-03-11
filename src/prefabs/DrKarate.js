@@ -49,7 +49,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.punchFrames = 10
         this.punchEndlag = 4
         this.kickFrames = 8
-        this.kickEndlag = 3
+        this.kickEndlag = 1
         this.fireballFrames = 10
         this.justHit = false
 
@@ -173,6 +173,7 @@ class KarateJumpState extends State {
         // update fighter position and play proper animation
         fighter.body.setVelocityY(fighter.jumpHeight)
         // fighter.anims.play(`karate-jump-${fighter.direction}`) //TODO
+        fighter.anims.play(`karate-idle-${fighter.direction}`)
     }
  
     execute(scene, fighter) {
@@ -466,6 +467,6 @@ class KarateKickState extends State {
  
 class KarateDeathState extends State {
     enter(scene, fighter) {
- 
+        
     }
 } 
