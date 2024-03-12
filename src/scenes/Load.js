@@ -140,6 +140,6 @@ class Load extends Phaser.Scene {
 
         // proceed once loading completes
         // this.scene.start('menuScene') //TODO
-        this.scene.start('playScene')
+        this.scene.start('menuScene')
     }
 }

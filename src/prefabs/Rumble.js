@@ -12,6 +12,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.fighterVelocity = speed
         this.direction = direction
         this.opponent = opponent
+        this.grounded = true
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -46,7 +47,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         // Rumble frame data
         this.currentFrame = 0
         this.attackStartTime = 0
-        this.fps = 12
+        this.fps = 16
         this.punchFrames = 7
         this.punchEndlag = 3
         this.kickFrames = 8
@@ -86,6 +87,7 @@ class RumbleIdleState extends State {
     enter(scene, fighter) {
         fighter.body.setVelocity(0)
         fighter.anims.play(`rumble-idle-${fighter.direction}`)
+        fighter.grounded = true
     }
  
     execute(scene, fighter) {
@@ -127,6 +129,10 @@ class RumbleIdleState extends State {
  
  
 class RumbleMoveState extends State {
+    enter(scene, fighter) {
+        fighter.grounded = true
+    }
+
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
@@ -176,6 +182,7 @@ class RumbleJumpState extends State {
         // update fighter position and play proper animation
         fighter.body.setVelocityY(fighter.jumpHeight)
         fighter.anims.play(`rumble-jump-${fighter.direction}`)
+        fighter.grounded = false
     }
  
     execute(scene, fighter) {
@@ -216,7 +223,11 @@ class RumblePunchState extends State {
         // transitions: idle
         // handling: punch attack
         
-        fighter.body.setVelocityX(0)
+        if (fighter.grounded) {
+            fighter.body.setVelocityX(0)
+        } else {
+            fighter.grounded = true
+        }
         //fighter.anims.play(`rumble-punch-${fighter.direction}`) //TODO
 
         fighter.currentFrame = 0;
@@ -342,7 +353,8 @@ class RumbleKickState extends State {
         // transitions: idle
         // handling: kick attack
  
-        fighter.body.setVelocity(0)
+        //fighter.body.setVelocity(0)
+        fighter.grounded = true
         // fighter.anims.play(`rumble-kick-${fighter.direction}`) //TODO
         // switch(fighter.direction) {
         //     case 'left':
