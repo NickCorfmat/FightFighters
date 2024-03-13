@@ -259,7 +259,7 @@ class RumblePunchState extends State {
     }
 
     execute(scene, fighter) {
-        const { punch, kick, special } = fighter.keys
+        const { punch, kick, special, left, right } = fighter.keys
 
         if (fighter.hitstunFrames > 0) {
             this.stateMachine.transition('hurt')
@@ -277,6 +277,9 @@ class RumblePunchState extends State {
             if(Phaser.Input.Keyboard.JustDown(special)) {
                 fighter.buffer = 'special'
             }
+            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(right)) {
+                fighter.buffer = 'move'
+            }
         }
 
         if (fighter.currentFrame == 1) {
@@ -284,7 +287,7 @@ class RumblePunchState extends State {
             if (!fighter.justHit) {
                 fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 325 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
-                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].knockback = 250
                     scene[`player${fighter.opponent}`].hitstunFrames = 4
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
@@ -320,7 +323,7 @@ class RumblePunchState extends State {
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -275 : 80) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
-                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].knockback = 400
                     scene[`player${fighter.opponent}`].hitstunFrames = 4
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
@@ -361,6 +364,8 @@ class RumblePunchState extends State {
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk')
             } else {
                 this.stateMachine.transition('idle');
             }
@@ -387,7 +392,7 @@ class RumbleKickState extends State {
     }
 
     execute(scene, fighter) {
-        const { punch, kick, special } = fighter.keys
+        const { punch, kick, special, left, right } = fighter.keys
 
         if (fighter.hitstunFrames > 0) {
             this.stateMachine.transition('hurt')
@@ -404,6 +409,9 @@ class RumbleKickState extends State {
             }
             if(Phaser.Input.Keyboard.JustDown(special)) {
                 fighter.buffer = 'special'
+            }
+            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(right)) {
+                fighter.buffer = 'move'
             }
         }
 
@@ -475,6 +483,8 @@ class RumbleKickState extends State {
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk');
             } else {
                 this.stateMachine.transition('idle');
             }

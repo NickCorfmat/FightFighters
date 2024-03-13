@@ -181,6 +181,7 @@ class KarateJumpState extends State {
         // update fighter position and play proper animation
         fighter.body.setVelocityY(fighter.jumpHeight)
         fighter.anims.play(`karate-idle-${fighter.direction}`)
+        fighter.grounded = false
     }
  
     execute(scene, fighter) {
@@ -226,7 +227,11 @@ class KaratePunchState extends State {
         // transitions: idle
         // handling: punch attack
         
-        fighter.body.setVelocityX(0)
+        if (fighter.grounded) {
+            fighter.body.setVelocityX(0)
+        } else {
+            fighter.grounded = true
+        }
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
@@ -236,7 +241,7 @@ class KaratePunchState extends State {
     }
 
     execute(scene, fighter) {
-        const { punch, kick, special } = fighter.keys
+        const { punch, kick, special, left, right } = fighter.keys
 
         if (fighter.hitstunFrames > 0) {
             this.stateMachine.transition('hurt')
@@ -254,6 +259,9 @@ class KaratePunchState extends State {
             if(Phaser.Input.Keyboard.JustDown(special)) {
                 fighter.buffer = 'special'
             }
+            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(right)) {
+                fighter.buffer = 'move'
+            }
         }
 
         if (fighter.currentFrame == 0 || fighter.currentFrame == 1) {
@@ -261,7 +269,7 @@ class KaratePunchState extends State {
             if (!fighter.justHit) {
                 fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -280 : 110) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
-                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].knockback = 250
                     scene[`player${fighter.opponent}`].hitstunFrames = 6
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
@@ -297,8 +305,8 @@ class KaratePunchState extends State {
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -250 : 50) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
-                    scene[`player${fighter.opponent}`].knockback = 200
-                    scene[`player${fighter.opponent}`].hitstunFrames = 6
+                    scene[`player${fighter.opponent}`].knockback = 400
+                    scene[`player${fighter.opponent}`].hitstunFrames = 4
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
                     }
@@ -338,6 +346,8 @@ class KaratePunchState extends State {
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk');
             } else {
                 this.stateMachine.transition('idle');
             }
@@ -354,7 +364,11 @@ class KarateKickState extends State {
         // transitions: idle
         // handling: kick attack
  
-        fighter.body.setVelocity(0)
+        if (fighter.grounded) {
+            fighter.body.setVelocityX(0)
+        } else {
+            fighter.grounded = true
+        }
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
@@ -364,7 +378,7 @@ class KarateKickState extends State {
     }
 
     execute(scene, fighter) {
-        const { punch, kick, special } = fighter.keys
+        const { punch, kick, special, left, right } = fighter.keys
 
         if (fighter.hitstunFrames > 0) {
             this.stateMachine.transition('hurt')
@@ -381,6 +395,9 @@ class KarateKickState extends State {
             }
             if(Phaser.Input.Keyboard.JustDown(special)) {
                 fighter.buffer = 'special'
+            }
+            if(Phaser.Input.Keyboard.JustDown(left) || Phaser.Input.Keyboard.JustDown(right)) {
+                fighter.buffer = 'move'
             }
         }
 
@@ -430,6 +447,8 @@ class KarateKickState extends State {
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk');
             } else {
                 this.stateMachine.transition('idle');
             }

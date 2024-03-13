@@ -5,8 +5,8 @@ class Play extends Phaser.Scene {
  
     init(data) {
         // retrieve previous scene data
-        this.p1 = data.player1
-        this.p2 = data.player2
+        this.p1 = 'rumble'//data.player1
+        this.p2 = 'karate'//data.player2
 
         // initialize boolean flags
         this.gameStart = false
