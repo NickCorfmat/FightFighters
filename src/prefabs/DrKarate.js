@@ -12,6 +12,11 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.fighterVelocity = speed
         this.direction = direction
         this.opponent = opponent
+        this.grounded = true
+        this.knockback = 0
+        this.hitstunFrames = 0
+        this.inHitstun = false
+        this.justComboed = false
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -71,7 +76,8 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
             jump: new KarateJumpState(),
             punch: new KaratePunchState(),
             kick: new KarateKickState(),
-            death: new KarateDeathState()
+            death: new KarateDeathState(),
+            hurt: new KarateHurtState()
         }, [scene, this])
     }
 }
@@ -88,6 +94,11 @@ class KarateIdleState extends State {
 
         // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
+
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -122,6 +133,11 @@ class KarateMoveState extends State {
 
         // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
+
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -206,6 +222,11 @@ class KarateJumpState extends State {
             this.stateMachine.transition('kick')
             return
         }
+
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
     }
 }
  
@@ -246,6 +267,11 @@ class KaratePunchState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
@@ -262,16 +288,17 @@ class KaratePunchState extends State {
         if (fighter.currentFrame == 0 || fighter.currentFrame == 1) {
             // TODO Punch 1 hit (10 damage)
             if (!fighter.justHit) {
-                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 130)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch1HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 10
-                        scene[`player${fighter.opponent}`].healthBar.decrease(10)
-                        console.log('hit 1')
-                        fighter.justHit = true
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -280 : 110) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].hitstunFrames = 6
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.punch1HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 10
+                    scene[`player${fighter.opponent}`].healthBar.decrease(10)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -297,16 +324,17 @@ class KaratePunchState extends State {
         if (fighter.currentFrame == 4 || fighter.currentFrame == 5) {
             // TODO Punch 2 hit (15 damage)
             if (!fighter.justHit) {
-                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 80), fighter.y + 130)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch2HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 15
-                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
-                        console.log('hit 2')
-                        fighter.justHit = true
+                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -250 : 50) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].hitstunFrames = 6
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.punch2HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 15
+                    scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -396,6 +424,11 @@ class KarateKickState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
@@ -412,16 +445,17 @@ class KarateKickState extends State {
         if (fighter.currentFrame == 2) {
             // TODO Kick 1 hit (15 damage)
             if (!fighter.justHit) {
-                fighter.kickHB.setPosition(fighter.x + (fighter.direction === 'left' ? -210 : 80), fighter.y + 175)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kickHB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 15
-                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
-                        console.log('hit 1')
-                        fighter.justHit = true
+                fighter.kickHB.setPosition(fighter.x + (fighter.direction === 'left' ? -230 : 80), fighter.y + 175)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -230 : 80), fighter.y + 175, fighter.x + (fighter.direction === 'left' ? -230 : 80) + fighter.punch1HB.body.width, fighter.y + 175 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 500
+                    scene[`player${fighter.opponent}`].hitstunFrames = 4
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.kickHB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 15
+                    scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -470,3 +504,47 @@ class KarateDeathState extends State {
         
     }
 } 
+
+class KarateHurtState extends State {
+    enter(scene, fighter) {
+        fighter.inHitstun = true
+        if (fighter.grounded) {
+            fighter.body.setVelocity(fighter.knockback * (scene[`player${fighter.opponent}`].direction === 'left' ? -1 : 1), 0)
+        } else {
+            fighter.body.setVelocity(fighter.knockback * (scene[`player${fighter.opponent}`].direction === 'left' ? -1 : 1), -500)
+        }
+        fighter.anims.play(`karate-hurt-${fighter.direction}`)
+        fighter.currentFrame = 0
+        fighter.attackStartTime = Date.now()
+    }
+
+    execute(scene, fighter) {
+        if (fighter.justComboed) {
+            fighter.justComboed = false
+            this.stateMachine.transition('hurt');
+            return
+        }
+
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
+        if (fighter.currentFrame >= fighter.hitstunFrames) {
+            fighter.body.setVelocity(0)
+            fighter.inHitstun = false
+            fighter.hitstunFrames = 0
+            fighter.justComboed = false
+            this.stateMachine.transition('idle');
+            return
+        }
+    }
+}
+
+function hbOverlap(hb1x1, hb1y1, hb1x2, hb1y2, hb2x1, hb2y1, hb2x2, hb2y2) {
+    if (hb1x1 > hb2x2 || hb2x1 > hb1x2) {
+        return false;
+    }
+
+    if (hb1y2 < hb2y1 || hb2y2 < hb1y1) {
+        return false;
+    }
+
+    return true;
+}

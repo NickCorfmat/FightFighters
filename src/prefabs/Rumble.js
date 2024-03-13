@@ -13,6 +13,10 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.direction = direction
         this.opponent = opponent
         this.grounded = true
+        this.knockback = 0
+        this.hitstunFrames = 0
+        this.inHitstun = false
+        this.justComboed = false
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -47,7 +51,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         // Rumble frame data
         this.currentFrame = 0
         this.attackStartTime = 0
-        this.fps = 16
+        this.fps = 12
         this.punchFrames = 7
         this.punchEndlag = 3
         this.kickFrames = 8
@@ -73,7 +77,8 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
             jump: new RumbleJumpState(),
             punch: new RumblePunchState(),
             kick: new RumbleKickState(),
-            death: new RumbleDeathState()
+            death: new RumbleDeathState(),
+            hurt: new RumbleHurtState()
         }, [scene, this])
     }
  
@@ -123,6 +128,12 @@ class RumbleIdleState extends State {
 
         if (fighter.HP <= 0) {
             this.stateMachine.transition('death')
+            return
+        }
+
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
         }
     }
 }
@@ -139,6 +150,11 @@ class RumbleMoveState extends State {
  
         // create local copy keyboard object
         const { left, right, jump, punch, kick } = fighter.keys
+
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
  
         // transition to jump
         if(Phaser.Input.Keyboard.JustDown(jump)) {
@@ -192,9 +208,15 @@ class RumbleJumpState extends State {
         // create local copy keyboard object
         const { left, right, punch, kick } = fighter.keys
 
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         // check if fighter is grounded
         if (fighter.body.touching.down || fighter.body.blocked.down) {
             this.stateMachine.transition('idle')
+            return
         }
 
         // handle movement
@@ -244,6 +266,11 @@ class RumblePunchState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
@@ -260,16 +287,29 @@ class RumblePunchState extends State {
         if (fighter.currentFrame == 1) {
             // TODO Punch 1 hit (5 damage)
             if (!fighter.justHit) {
-                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -225 : 80), fighter.y + 340)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch1HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 5
-                        scene[`player${fighter.opponent}`].healthBar.decrease(5)
-                        console.log('hit 1')
-                        fighter.justHit = true
+                fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325)
+                // scene.add.rectangle(scene[`player${fighter.opponent}`].x + 75, scene[`player${fighter.opponent}`].y + 90, 75, 90, 0xff0000)
+                // scene.add.rectangle(scene[`player${fighter.opponent}`].x, scene[`player${fighter.opponent}`].y, scene[`player${fighter.opponent}`].width * 3, scene[`player${fighter.opponent}`].height * 3, 0xff0000)
+                // scene.add.rectangle(/*scene[`player${fighter.opponent}`].body.x + */scene[`player${fighter.opponent}`].body.x, /*scene[`player${fighter.opponent}`].body.y + */scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.height, 0xff0000).setOrigin(0)
+                // console.log(`real hurtbox: (${scene[`player${fighter.opponent}`].body.x}, ${scene[`player${fighter.opponent}`].body.y}) (${scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width}, ${scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height})`)
+                // scene.add.rectangle(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325, fighter.punch1HB.body.width, fighter.punch1HB.body.height, 0x0000ff).setOrigin(0)
+                // console.log(`real hitbox: (${fighter.x + (fighter.direction === 'left' ? -250 : 75)}, ${fighter.y + 325}) (${fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width}, ${fighter.y + 325 + fighter.punch1HB.body.height})`)
+                // scene.add.rectangle(795, 592 - 220, 966 - 795, 700 - (592 - 220), 0xff0000).setOrigin(0)
+                // scene.add.rectangle(723, 425, 903 - 723, 485 - 425, 0x0000ff).setOrigin(0)
+                // scene.add.rectangle(880, 535 - 150, 25, 250, 0x00ff00).setOrigin(0)
+                // scene.add.rectangle(880, 863 - 150, 25, 25, 0x00ff00).setOrigin(0)
+                // scene.add.rectangle(880, 455, 25, 25, 0xff00ff).setOrigin(0)
+                // scene.add.rectangle(500 + 75, 440 + 50, fighter.punch1HB.body.width, fighter.punch1HB.body.height, 0x0000ff).setOrigin(0)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 325 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].hitstunFrames = 4
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.punch1HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 5
+                    scene[`player${fighter.opponent}`].healthBar.decrease(5)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -295,16 +335,17 @@ class RumblePunchState extends State {
         if (fighter.currentFrame == 4) {
             // TODO Punch 2 hit (10 damage)
             if (!fighter.justHit) {
-                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 80), fighter.y + 365)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.punch2HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 10
-                        scene[`player${fighter.opponent}`].healthBar.decrease(10)
-                        console.log('hit 2')
-                        fighter.justHit = true
+                fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -275 : 80) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 200
+                    scene[`player${fighter.opponent}`].hitstunFrames = 4
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.punch2HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 10
+                    scene[`player${fighter.opponent}`].healthBar.decrease(10)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -376,6 +417,11 @@ class RumbleKickState extends State {
     execute(scene, fighter) {
         const { punch, kick, special } = fighter.keys
 
+        if (fighter.hitstunFrames > 0) {
+            this.stateMachine.transition('hurt')
+            return
+        }
+
         if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
             // TODO buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
@@ -392,16 +438,17 @@ class RumbleKickState extends State {
         if (fighter.currentFrame == 3) {
             // TODO Kick 1 hit (15 damage)
             if (!fighter.justHit) {
-                fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -200 : 80), fighter.y + 375)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kick1HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 15
-                        scene[`player${fighter.opponent}`].healthBar.decrease(15)
-                        console.log('hit 1')
-                        fighter.justHit = true
+                fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -220 : 70) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 300
+                    scene[`player${fighter.opponent}`].hitstunFrames = 4
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.kick1HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 15
+                    scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -423,16 +470,17 @@ class RumbleKickState extends State {
         if (fighter.currentFrame == 7) {
             // TODO Kick 2 hit (20 damage)
             if (!fighter.justHit) {
-                fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -225 : 80), fighter.y + 400)
-                scene.physics.add.collider(scene[`player${fighter.opponent}`], fighter.kick2HB, () => {
-                    if (!fighter.justHit) {
-                        scene[`player${fighter.opponent}`].HP -= 20
-                        scene[`player${fighter.opponent}`].healthBar.decrease(20)
-                        console.log('hit 2')
-                        fighter.justHit = true
+                fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385)
+                if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 385 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
+                    scene[`player${fighter.opponent}`].knockback = 750
+                    scene[`player${fighter.opponent}`].hitstunFrames = 6
+                    if (scene[`player${fighter.opponent}`].inHitstun) {
+                        scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    fighter.kick2HB.disableHit()
-                }, null, scene)
+                    scene[`player${fighter.opponent}`].HP -= 20
+                    scene[`player${fighter.opponent}`].healthBar.decrease(20)
+                    fighter.justHit = true
+                }
             }
         }
 
@@ -475,4 +523,48 @@ class RumbleDeathState extends State {
         })
         //fighter.anims.stop()
     }
-} 
+}
+
+class RumbleHurtState extends State {
+    enter(scene, fighter) {
+        fighter.inHitstun = true
+        if (fighter.grounded) {
+            fighter.body.setVelocity(fighter.knockback * (scene[`player${fighter.opponent}`].direction === 'left' ? -1 : 1), 0)
+        } else {
+            fighter.body.setVelocity(fighter.knockback * (scene[`player${fighter.opponent}`].direction === 'left' ? -1 : 1), -500)
+        }
+        fighter.anims.play(`rumble-hurt-${fighter.direction}`)
+        fighter.currentFrame = 0
+        fighter.attackStartTime = Date.now()
+    }
+
+    execute(scene, fighter) {
+        if (fighter.justComboed) {
+            fighter.justComboed = false
+            this.stateMachine.transition('hurt');
+            return
+        }
+
+        fighter.currentFrame = Math.floor((Date.now() - fighter.attackStartTime) * fighter.fps / 1000)
+        if (fighter.currentFrame >= fighter.hitstunFrames) {
+            fighter.body.setVelocity(0)
+            fighter.inHitstun = false
+            fighter.hitstunFrames = 0
+            fighter.justComboed = false
+            this.stateMachine.transition('idle');
+            return
+        }
+    }
+}
+
+function hbOverlap(hb1x1, hb1y1, hb1x2, hb1y2, hb2x1, hb2y1, hb2x2, hb2y2) {
+    if (hb1x1 > hb2x2 || hb2x1 > hb1x2) {
+        return false;
+    }
+
+    if (hb1y2 < hb2y1 || hb2y2 < hb1y1) {
+        return false;
+    }
+
+    return true;
+}

@@ -143,7 +143,7 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        // this.scene.start('menuScene') //TODO
-        this.scene.start('menuScene')
+        this.scene.start('menuScene') //TODO
+        // this.scene.start('playScene')
     }
 }
