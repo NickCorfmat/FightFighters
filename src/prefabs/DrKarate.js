@@ -177,18 +177,9 @@ class KarateMoveState extends State {
 }
  
 class KarateJumpState extends State {
-    // enter(scene, fighter) {
-    //     fighter.setVelocityY(fighter.jumpHeight)
-    //     fighter.anims.play(`karate-walk-${fighter.direction}`)
-    //     scene.time.delayedCall(fighter.jumpTimer, () => {
-    //         this.stateMachine.transition('idle')
-    //     })
-    // }
-
     enter(scene, fighter) {
         // update fighter position and play proper animation
         fighter.body.setVelocityY(fighter.jumpHeight)
-        // fighter.anims.play(`karate-jump-${fighter.direction}`) //TODO
         fighter.anims.play(`karate-idle-${fighter.direction}`)
     }
  
@@ -231,26 +222,6 @@ class KarateJumpState extends State {
 }
  
 class KaratePunchState extends State {
-    // enter(scene, fighter) {
-    //     // transitions: idle
-    //     // handling: kick attack
- 
-    //     fighter.setVelocity(0)
-    //     fighter.anims.play(`karate-punch-${fighter.direction}`)
- 
-    //     fighter.once('animationcomplete', () => {
-    //         this.stateMachine.transition('idle')
-    //     })
-
-    //     // attack collision detection
-    //     /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
-    //     scene.physics.add.collider(scene.player1, hitbox, () => {
-    //         scene.player1.HP -= 5
-    //         scene.player1.healthBar.decrease(5)
-    //         hitbox.destroy()
-    //     }, null, scene)*/
-    // }
-
     enter(scene, fighter) {
         // transitions: idle
         // handling: punch attack
@@ -273,7 +244,7 @@ class KaratePunchState extends State {
         }
 
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
-            // TODO buffer moves
+            // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
             }
@@ -286,7 +257,7 @@ class KaratePunchState extends State {
         }
 
         if (fighter.currentFrame == 0 || fighter.currentFrame == 1) {
-            // TODO Punch 1 hit (10 damage)
+            // Punch 1 hit (10 damage)
             if (!fighter.justHit) {
                 fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -280 : 100), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -280 : 110) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -322,7 +293,7 @@ class KaratePunchState extends State {
         }
 
         if (fighter.currentFrame == 4 || fighter.currentFrame == 5) {
-            // TODO Punch 2 hit (15 damage)
+            // Punch 2 hit (15 damage)
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115, fighter.x + (fighter.direction === 'left' ? -250 : 50) + fighter.punch1HB.body.width, fighter.y + 115 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -379,46 +350,17 @@ class KaratePunchState extends State {
 }
 
 class KarateKickState extends State {
-    // enter(scene, fighter) {
-    //     // transitions: idle
-    //     // handling: kick attack
-        
-    //     fighter.setVelocity(0)
-    //     fighter.anims.play(`karate-kick-${fighter.direction}`)
-
-    //     fighter.once('animationcomplete', () => {
-    //         this.stateMachine.transition('idle')
-    //     })
-
-    //     // attack collision detection
-    //     /*let hitbox = new Hitbox(scene, fighter.x + (fighter.direction == 'left' ? -180 : 180), fighter.y + 150, 'hitbox') //TODO
-    //     scene.physics.add.collider(scene.player1, hitbox, () => {
-    //         scene.player1.HP -= 10
-    //         scene.player1.healthBar.decrease(10)
-    //         hitbox.destroy()
-    //     }, null, scene)*/
-    // }
     enter(scene, fighter) {
         // transitions: idle
         // handling: kick attack
  
         fighter.body.setVelocity(0)
-        // fighter.anims.play(`rumble-kick-${fighter.direction}`) //TODO
-        // switch(fighter.direction) {
-        //     case 'left':
-        //         break
-        //     case 'right':
-        //         break
-        // }
-        // scene.time.delayedCall(fighter.kickCooldown, () => { //TODO
-        //     this.stateMachine.transition('idle')
-        // })
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
         fighter.justHit = false
 
-        fighter.anims.play(`karate-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+        fighter.anims.play(`karate-idle-${fighter.direction}`) // Ensures Karate is facing the correct direction
     }
 
     execute(scene, fighter) {
@@ -430,7 +372,7 @@ class KarateKickState extends State {
         }
 
         if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
-            // TODO buffer moves
+            // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
             }
@@ -443,7 +385,7 @@ class KarateKickState extends State {
         }
 
         if (fighter.currentFrame == 2) {
-            // TODO Kick 1 hit (15 damage)
+            // Kick 1 hit (15 damage)
             if (!fighter.justHit) {
                 fighter.kickHB.setPosition(fighter.x + (fighter.direction === 'left' ? -230 : 80), fighter.y + 175)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -230 : 80), fighter.y + 175, fighter.x + (fighter.direction === 'left' ? -230 : 80) + fighter.punch1HB.body.width, fighter.y + 175 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -464,7 +406,7 @@ class KarateKickState extends State {
             fighter.kickHB.disableHit()
         }
 
-        if (fighter.currentFrame == 4) { // TODO try 5
+        if (fighter.currentFrame == 4) {
             // Cancellable into fireball
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'

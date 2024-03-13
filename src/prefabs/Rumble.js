@@ -250,17 +250,12 @@ class RumblePunchState extends State {
         } else {
             fighter.grounded = true
         }
-        //fighter.anims.play(`rumble-punch-${fighter.direction}`) //TODO
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
         fighter.justHit = false
 
         fighter.anims.play(`rumble-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
-
-        /*scene.time.delayedCall(fighter.punchCooldown, () => { //TODO
-            this.stateMachine.transition('idle')
-        })*/
     }
 
     execute(scene, fighter) {
@@ -272,7 +267,7 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
-            // TODO buffer moves
+            // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
             }
@@ -285,21 +280,9 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame == 1) {
-            // TODO Punch 1 hit (5 damage)
+            // Punch 1 hit (5 damage)
             if (!fighter.justHit) {
                 fighter.punch1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325)
-                // scene.add.rectangle(scene[`player${fighter.opponent}`].x + 75, scene[`player${fighter.opponent}`].y + 90, 75, 90, 0xff0000)
-                // scene.add.rectangle(scene[`player${fighter.opponent}`].x, scene[`player${fighter.opponent}`].y, scene[`player${fighter.opponent}`].width * 3, scene[`player${fighter.opponent}`].height * 3, 0xff0000)
-                // scene.add.rectangle(/*scene[`player${fighter.opponent}`].body.x + */scene[`player${fighter.opponent}`].body.x, /*scene[`player${fighter.opponent}`].body.y + */scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.height, 0xff0000).setOrigin(0)
-                // console.log(`real hurtbox: (${scene[`player${fighter.opponent}`].body.x}, ${scene[`player${fighter.opponent}`].body.y}) (${scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width}, ${scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height})`)
-                // scene.add.rectangle(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325, fighter.punch1HB.body.width, fighter.punch1HB.body.height, 0x0000ff).setOrigin(0)
-                // console.log(`real hitbox: (${fighter.x + (fighter.direction === 'left' ? -250 : 75)}, ${fighter.y + 325}) (${fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width}, ${fighter.y + 325 + fighter.punch1HB.body.height})`)
-                // scene.add.rectangle(795, 592 - 220, 966 - 795, 700 - (592 - 220), 0xff0000).setOrigin(0)
-                // scene.add.rectangle(723, 425, 903 - 723, 485 - 425, 0x0000ff).setOrigin(0)
-                // scene.add.rectangle(880, 535 - 150, 25, 250, 0x00ff00).setOrigin(0)
-                // scene.add.rectangle(880, 863 - 150, 25, 25, 0x00ff00).setOrigin(0)
-                // scene.add.rectangle(880, 455, 25, 25, 0xff00ff).setOrigin(0)
-                // scene.add.rectangle(500 + 75, 440 + 50, fighter.punch1HB.body.width, fighter.punch1HB.body.height, 0x0000ff).setOrigin(0)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 325, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 325 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
                     scene[`player${fighter.opponent}`].knockback = 200
                     scene[`player${fighter.opponent}`].hitstunFrames = 4
@@ -333,7 +316,7 @@ class RumblePunchState extends State {
         }
 
         if (fighter.currentFrame == 4) {
-            // TODO Punch 2 hit (10 damage)
+            // Punch 2 hit (10 damage)
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -275 : 80) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -394,18 +377,7 @@ class RumbleKickState extends State {
         // transitions: idle
         // handling: kick attack
  
-        //fighter.body.setVelocity(0)
         fighter.grounded = true
-        // fighter.anims.play(`rumble-kick-${fighter.direction}`) //TODO
-        // switch(fighter.direction) {
-        //     case 'left':
-        //         break
-        //     case 'right':
-        //         break
-        // }
-        // scene.time.delayedCall(fighter.kickCooldown, () => { //TODO
-        //     this.stateMachine.transition('idle')
-        // })
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
@@ -423,7 +395,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
-            // TODO buffer moves
+            // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
             }
@@ -436,7 +408,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame == 3) {
-            // TODO Kick 1 hit (15 damage)
+            // Kick 1 hit (15 damage)
             if (!fighter.justHit) {
                 fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -220 : 70) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -468,7 +440,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame == 7) {
-            // TODO Kick 2 hit (20 damage)
+            // Kick 2 hit (20 damage)
             if (!fighter.justHit) {
                 fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 385 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -521,7 +493,6 @@ class RumbleDeathState extends State {
         fighter.once('animationcomplete', () => {
             fighter.anims.play(`rumble-dead-${fighter.direction}`)
         })
-        //fighter.anims.stop()
     }
 }
 
