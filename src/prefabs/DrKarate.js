@@ -50,7 +50,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         // Dr. Karate frame data
         this.currentFrame = 0
         this.attackStartTime = 0
-        this.fps = 12
+        this.fps = 16
         this.punchFrames = 10
         this.punchEndlag = 4
         this.kickFrames = 8
@@ -229,8 +229,6 @@ class KaratePunchState extends State {
         
         if (fighter.grounded) {
             fighter.body.setVelocityX(0)
-        } else {
-            fighter.grounded = true
         }
 
         fighter.currentFrame = 0;
@@ -366,8 +364,6 @@ class KarateKickState extends State {
  
         if (fighter.grounded) {
             fighter.body.setVelocityX(0)
-        } else {
-            fighter.grounded = true
         }
 
         fighter.currentFrame = 0;

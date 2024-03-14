@@ -51,7 +51,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         // Rumble frame data
         this.currentFrame = 0
         this.attackStartTime = 0
-        this.fps = 12
+        this.fps = 16
         this.punchFrames = 7
         this.punchEndlag = 3
         this.kickFrames = 8
@@ -140,10 +140,6 @@ class RumbleIdleState extends State {
  
  
 class RumbleMoveState extends State {
-    enter(scene, fighter) {
-        fighter.grounded = true
-    }
-
     execute(scene, fighter) {
         // transitions: move, jump, punch, kick, fireball, hurt, death
         // handling: left/right movement
@@ -247,8 +243,6 @@ class RumblePunchState extends State {
         
         if (fighter.grounded) {
             fighter.body.setVelocityX(0)
-        } else {
-            fighter.grounded = true
         }
 
         fighter.currentFrame = 0;
@@ -382,7 +376,7 @@ class RumbleKickState extends State {
         // transitions: idle
         // handling: kick attack
  
-        fighter.grounded = true
+        // fighter.grounded = true
 
         fighter.currentFrame = 0;
         fighter.attackStartTime = Date.now()
@@ -470,6 +464,9 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame >= fighter.kickFrames && fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
+            if (fighter.grounded) {
+                fighter.setVelocity(0)
+            }
             fighter.setFrame(fighter.currentFrame/* - fighter.kickFrames*/);
         } else if (fighter.currentFrame < fighter.kickFrames) {
             fighter.setFrame(35 + fighter.currentFrame);
