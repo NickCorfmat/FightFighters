@@ -17,6 +17,7 @@ class Rumble extends Phaser.Physics.Arcade.Sprite {
         this.hitstunFrames = 0
         this.inHitstun = false
         this.justComboed = false
+        this.onePunch = true
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -250,6 +251,8 @@ class RumblePunchState extends State {
         fighter.justHit = false
 
         fighter.anims.play(`rumble-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+
+        fighter.onePunch = true
     }
 
     execute(scene, fighter) {
@@ -264,6 +267,7 @@ class RumblePunchState extends State {
             // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
+                fighter.onePunch = false
             }
             if(Phaser.Input.Keyboard.JustDown(kick)) {
                 fighter.buffer = 'kick'
@@ -302,17 +306,43 @@ class RumblePunchState extends State {
             // Cancellable into kick or fireball
             if (fighter.buffer === 'kick') {
                 fighter.buffer = 'empty'
-                this.stateMachine.transition('kick');
+                this.stateMachine.transition('kick')
                 return
             } else if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
                 console.log('fireballing rn') //TODO
-                this.stateMachine.transition('idle');
+                this.stateMachine.transition('idle')
                 return
+            } else if (fighter.buffer === 'punch') {
+                fighter.buffer = 'empty'
+                fighter.onePunch = false
             }
         }
 
-        if (fighter.currentFrame == 4) {
+        if (fighter.onePunch && fighter.currentFrame > 3 && fighter.currentFrame < 3 + fighter.punchEndlag) {
+            console.log('uhh')
+            fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
+        }
+
+        if (fighter.onePunch && fighter.currentFrame >= 3 + fighter.punchEndlag) {
+            console.log('well then')
+            if (fighter.buffer === 'kick') {
+                this.stateMachine.transition('kick')
+            } else if (fighter.buffer === 'special') {
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle')
+            } else if (fighter.buffer === 'punch') {
+                this.stateMachine.transition('punch')
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk')
+            } else {
+                this.stateMachine.transition('idle');
+            }
+            fighter.buffer = 'empty'
+            return
+        }
+
+        if (!fighter.onePunch && fighter.currentFrame == 4) {
             // Punch 2 hit (10 damage)
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -275 : 80), fighter.y + 360)
@@ -329,35 +359,35 @@ class RumblePunchState extends State {
             }
         }
 
-        if (fighter.currentFrame == 5) {
+        if (!fighter.onePunch && fighter.currentFrame == 5) {
             fighter.justHit = false
             fighter.punch2HB.disableHit()
         }
 
-        if (fighter.currentFrame > 4 && fighter.currentFrame < fighter.punchFrames) {
+        if (!fighter.onePunch && fighter.currentFrame > 4 && fighter.currentFrame < fighter.punchFrames) {
             // Cancellable into fireball
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
                 console.log('fireballing rn') //TODO
-                this.stateMachine.transition('idle');
+                this.stateMachine.transition('idle')
                 return
             }
         }
 
-        if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
-            fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
-        } else if (fighter.currentFrame < fighter.punchFrames) {
+        if (!fighter.onePunch && fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
+            fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/)
+        } else if (!(fighter.onePunch && fighter.currentFrame >= 3) && fighter.currentFrame < fighter.punchFrames) {
             fighter.setFrame(28 + fighter.currentFrame);
         }
 
-        if (fighter.currentFrame == fighter.punchFrames + fighter.punchEndlag) {
+        if (!fighter.onePunch && fighter.currentFrame == fighter.punchFrames + fighter.punchEndlag) {
             if (fighter.buffer === 'kick') {
-                this.stateMachine.transition('kick');
+                this.stateMachine.transition('kick')
             } else if (fighter.buffer === 'special') {
                 console.log('fireballing rn') //TODO
-                this.stateMachine.transition('idle');
+                this.stateMachine.transition('idle')
             } else if (fighter.buffer === 'punch') {
-                this.stateMachine.transition('punch');
+                this.stateMachine.transition('punch')
             } else if (fighter.buffer === 'move') {
                 this.stateMachine.transition('walk')
             } else {

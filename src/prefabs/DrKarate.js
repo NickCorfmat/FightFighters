@@ -17,6 +17,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.hitstunFrames = 0
         this.inHitstun = false
         this.justComboed = false
+        this.onePunch = true
 
         this.MAX_VELOCITY = 500
         this.MAX_VELOCITY_X = 600
@@ -236,6 +237,8 @@ class KaratePunchState extends State {
         fighter.justHit = false
 
         fighter.anims.play(`karate-idle-${fighter.direction}`) // Ensures Rumble is facing the correct direction
+
+        fighter.onePunch = true
     }
 
     execute(scene, fighter) {
@@ -250,6 +253,7 @@ class KaratePunchState extends State {
             // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
                 fighter.buffer = 'punch'
+                fighter.onePunch = false
             }
             if(Phaser.Input.Keyboard.JustDown(kick)) {
                 fighter.buffer = 'kick'
@@ -288,17 +292,41 @@ class KaratePunchState extends State {
             // Cancellable into kick or special
             if (fighter.buffer === 'kick') {
                 fighter.buffer = 'empty'
-                this.stateMachine.transition('kick');
+                this.stateMachine.transition('kick')
                 return
             } else if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
                 console.log('specialing rn') //TODO
-                this.stateMachine.transition('idle');
+                this.stateMachine.transition('idle')
                 return
+            } else if (fighter.buffer === 'punch') {
+                fighter.buffer = 'empty'
+                fighter.onePunch = false
             }
         }
 
-        if (fighter.currentFrame == 4 || fighter.currentFrame == 5) {
+        if (fighter.onePunch && fighter.currentFrame > 3 && fighter.currentFrame < 3 + fighter.punchEndlag) {
+            fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
+        }
+
+        if (fighter.onePunch && fighter.currentFrame >= 3 + fighter.punchEndlag) {
+            if (fighter.buffer === 'kick') {
+                this.stateMachine.transition('kick')
+            } else if (fighter.buffer === 'special') {
+                console.log('fireballing rn') //TODO
+                this.stateMachine.transition('idle')
+            } else if (fighter.buffer === 'punch') {
+                this.stateMachine.transition('punch')
+            } else if (fighter.buffer === 'move') {
+                this.stateMachine.transition('walk')
+            } else {
+                this.stateMachine.transition('idle');
+            }
+            fighter.buffer = 'empty'
+            return
+        }
+
+        if (!fighter.onePunch && (fighter.currentFrame == 4 || fighter.currentFrame == 5)) {
             // Punch 2 hit (15 damage)
             if (!fighter.justHit) {
                 fighter.punch2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 50), fighter.y + 115)
@@ -315,12 +343,12 @@ class KaratePunchState extends State {
             }
         }
 
-        if (fighter.currentFrame == 6) {
+        if (!fighter.onePunch && fighter.currentFrame == 6) {
             fighter.justHit = false
             fighter.punch2HB.disableHit()
         }
 
-        if (fighter.currentFrame > 5 && fighter.currentFrame < fighter.punchFrames) {
+        if (!fighter.onePunch && fighter.currentFrame > 5 && fighter.currentFrame < fighter.punchFrames) {
             // Cancellable into special
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
@@ -330,13 +358,13 @@ class KaratePunchState extends State {
             }
         }
 
-        if (fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
+        if (!fighter.onePunch && fighter.currentFrame >= fighter.punchFrames && fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             fighter.setFrame(fighter.currentFrame - fighter.punchFrames);
-        } else if (fighter.currentFrame < fighter.punchFrames) {
+        } else if (!(fighter.onePunch && fighter.currentFrame >= 3) && fighter.currentFrame < fighter.punchFrames) {
             fighter.setFrame(12 + fighter.currentFrame);
         }
 
-        if (fighter.currentFrame == fighter.punchFrames + fighter.punchEndlag) {
+        if (!fighter.onePunch && fighter.currentFrame == fighter.punchFrames + fighter.punchEndlag) {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick');
             } else if (fighter.buffer === 'special') {
