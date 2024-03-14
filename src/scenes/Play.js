@@ -102,13 +102,13 @@ class Play extends Phaser.Scene {
         }
  
         // face players towards each other //TODO comment this section out to do manual turn around
-        // if (this.player1.x > this.player2.x) {
-        //     this.player1.direction = 'left'
-        //     this.player2.direction = 'right'
-        // } else {
-        //     this.player2.direction = 'left'
-        //     this.player1.direction = 'right'
-        // }
+        if (this.player1.x > this.player2.x) {
+            this.player1.direction = 'left'
+            this.player2.direction = 'right'
+        } else {
+            this.player2.direction = 'left'
+            this.player1.direction = 'right'
+        }
 
         // console.log(this.player1.HP) //TODO
     }
