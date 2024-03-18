@@ -434,7 +434,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame == 3) {
-            // Kick 1 hit (15 damage)
+            // Kick 1 hit (10 damage)
             if (!fighter.justHit) {
                 fighter.kick1HB.setPosition(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -220 : 70), fighter.y + 360, fighter.x + (fighter.direction === 'left' ? -220 : 70) + fighter.punch1HB.body.width, fighter.y + 360 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -443,8 +443,8 @@ class RumbleKickState extends State {
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    scene[`player${fighter.opponent}`].HP -= 15
-                    scene[`player${fighter.opponent}`].healthBar.decrease(15)
+                    scene[`player${fighter.opponent}`].HP -= 10
+                    scene[`player${fighter.opponent}`].healthBar.decrease(10)
                     fighter.justHit = true
                 }
             }
@@ -465,7 +465,7 @@ class RumbleKickState extends State {
         }
 
         if (fighter.currentFrame == 7) {
-            // Kick 2 hit (20 damage)
+            // Kick 2 hit (15 damage)
             if (!fighter.justHit) {
                 fighter.kick2HB.setPosition(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385)
                 if (hbOverlap(fighter.x + (fighter.direction === 'left' ? -250 : 75), fighter.y + 385, fighter.x + (fighter.direction === 'left' ? -250 : 75) + fighter.punch1HB.body.width, fighter.y + 385 + fighter.punch1HB.body.height, scene[`player${fighter.opponent}`].body.x, scene[`player${fighter.opponent}`].body.y, scene[`player${fighter.opponent}`].body.x + scene[`player${fighter.opponent}`].body.width, scene[`player${fighter.opponent}`].body.y + scene[`player${fighter.opponent}`].body.height)) {
@@ -474,8 +474,8 @@ class RumbleKickState extends State {
                     if (scene[`player${fighter.opponent}`].inHitstun) {
                         scene[`player${fighter.opponent}`].justComboed = true
                     }
-                    scene[`player${fighter.opponent}`].HP -= 20
-                    scene[`player${fighter.opponent}`].healthBar.decrease(20)
+                    scene[`player${fighter.opponent}`].HP -= 15
+                    scene[`player${fighter.opponent}`].healthBar.decrease(15)
                     fighter.justHit = true
                 }
             }
