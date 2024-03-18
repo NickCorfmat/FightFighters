@@ -9,6 +9,13 @@ Phaser components utilized:
     4. timers
     5. cameras (for scene transitions)
     6. bitmap text
+
+Sources:
+1. Main menu music by Panda Beats, https://www.youtube.com/watch?v=pAZLAYVoCcY&list=LL&index=14
+2. All other music by Brad Breeck, https://www.youtube.com/watch?v=hQSAoOKF71E&list=LL&index=25
+3. Character spritesheets/typeface/character select screen by Paul Robertson, https://probertson.tumblr.com/post/31637353328/gravity-falls-animations
+    Note: Menu/play background, cutscene animations, and Rumble's winning animation recreated from original Paul Robertson artwork
+4. SFX/dialogue from original Gravity Falls episode, a license of The Walt Disney Company
 */
 
 "use strict"
