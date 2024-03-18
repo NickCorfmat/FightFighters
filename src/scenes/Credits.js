@@ -17,12 +17,12 @@ class Credits extends Phaser.Scene {
         this.add.bitmapText(930, 705, 'fight-font', 'Menu - [M]', 24).setOrigin(0)
 
         // credits
-        this.add.bitmapText(75, 150, 'fight-font', '\"Fight Fighters\" Adapted from Disney\'s Gravity Falls\n Season 1 Episode 10 \"Fight Fighters\"', 28).setOrigin(0)
-        this.add.bitmapText(75, 250, 'fight-font', 'Code: Nick Corfmat and Rayan Hirech', 28).setOrigin(0)
-        this.add.bitmapText(75, 325, 'fight-font', 'Original Pixel Art: Paul Robertson', 28).setOrigin(0)
-        this.add.bitmapText(75, 400, 'fight-font', 'Main Menu Music: \"Shoryuken\" by Panda Beats', 28).setOrigin(0)
-        this.add.bitmapText(75, 475, 'fight-font', 'All Other Music: Brad Breeck', 28).setOrigin(0)
-        this.add.bitmapText(75, 550, 'fight-font', 'SFX: From original \"Fight Fighters\" episode', 28).setOrigin(0)
+        this.add.bitmapText(100, 150, 'fight-font', '\"Fight Fighters\" Adapted from Disney\'s\nGravity Falls Season 1 Episode 10 \"Fight Fighters\"', 28).setOrigin(0)
+        this.add.bitmapText(100, 250, 'fight-font', 'Code: Nick Corfmat and Rayan Hirech', 28).setOrigin(0)
+        this.add.bitmapText(100, 325, 'fight-font', 'Original Pixel Art: Paul Robertson', 28).setOrigin(0)
+        this.add.bitmapText(100, 400, 'fight-font', 'Main Menu Music: \"Shoryuken\" by Panda Beats', 28).setOrigin(0)
+        this.add.bitmapText(100, 475, 'fight-font', 'All Other Music: Brad Breeck', 28).setOrigin(0)
+        this.add.bitmapText(100, 550, 'fight-font', 'SFX: From original \"Fight Fighters\" episode', 28).setOrigin(0)
     }
 
     update() {
