@@ -296,7 +296,6 @@ class KaratePunchState extends State {
                 return
             } else if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('specialing rn') //TODO
                 this.stateMachine.transition('idle')
                 return
             } else if (fighter.buffer === 'punch') {
@@ -313,7 +312,6 @@ class KaratePunchState extends State {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick')
             } else if (fighter.buffer === 'special') {
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle')
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch')
@@ -352,7 +350,6 @@ class KaratePunchState extends State {
             // Cancellable into special
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('specialing rn') //TODO
                 this.stateMachine.transition('idle');
                 return
             }
@@ -368,7 +365,6 @@ class KaratePunchState extends State {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick');
             } else if (fighter.buffer === 'special') {
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
@@ -451,7 +447,6 @@ class KarateKickState extends State {
             // Cancellable into fireball
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle');
                 return
             }
@@ -467,7 +462,6 @@ class KarateKickState extends State {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick');
             } else if (fighter.buffer === 'special') {
-                console.log('specialing rn') //TODO
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');

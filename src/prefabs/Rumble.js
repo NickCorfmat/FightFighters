@@ -310,7 +310,6 @@ class RumblePunchState extends State {
                 return
             } else if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle')
                 return
             } else if (fighter.buffer === 'punch') {
@@ -320,16 +319,13 @@ class RumblePunchState extends State {
         }
 
         if (fighter.onePunch && fighter.currentFrame > 3 && fighter.currentFrame < 3 + fighter.punchEndlag) {
-            console.log('uhh')
             fighter.setFrame(fighter.currentFrame/* - fighter.punchFrames*/);
         }
 
         if (fighter.onePunch && fighter.currentFrame >= 3 + fighter.punchEndlag) {
-            console.log('well then')
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick')
             } else if (fighter.buffer === 'special') {
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle')
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch')
@@ -368,7 +364,6 @@ class RumblePunchState extends State {
             // Cancellable into fireball
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle')
                 return
             }
@@ -384,7 +379,6 @@ class RumblePunchState extends State {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick')
             } else if (fighter.buffer === 'special') {
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle')
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch')
@@ -461,11 +455,10 @@ class RumbleKickState extends State {
             fighter.kick1HB.disableHit()
         }
 
-        if (fighter.currentFrame == 4) { // TODO try 5
+        if (fighter.currentFrame == 4) {
             // Cancellable into fireball
             if (fighter.buffer === 'special') {
                 fighter.buffer = 'empty'
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle');
                 return
             }
@@ -506,7 +499,6 @@ class RumbleKickState extends State {
             if (fighter.buffer === 'kick') {
                 this.stateMachine.transition('kick');
             } else if (fighter.buffer === 'special') {
-                console.log('fireballing rn') //TODO
                 this.stateMachine.transition('idle');
             } else if (fighter.buffer === 'punch') {
                 this.stateMachine.transition('punch');
