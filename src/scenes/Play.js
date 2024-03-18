@@ -5,11 +5,12 @@ class Play extends Phaser.Scene {
  
     init(data) {
         // retrieve previous scene data
-        this.p1 = 'rumble'//data.player1
-        this.p2 = 'karate'//data.player2
+        this.p1 = data.player1
+        this.p2 = data.player2
 
         // initialize boolean flags
         this.gameStart = false
+        this.koSFXisPlaying = false
 
         // setting up player keyboard input
         this.p1Keys = { }
@@ -86,7 +87,12 @@ class Play extends Phaser.Scene {
         if (this.player1.HP <= 0) {
             this.gameStart = false
             this.playMusic.stop()
-            this.knockoutSFX.play()
+
+            if (!this.koSFXisPlaying) {
+                this.knockoutSFX.play()
+                this.koSFXisPlaying = true
+            }
+
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
             this.time.delayedCall(1800, () => {
                 this.scene.start(`${this.p2}WinnerScene`)
@@ -94,7 +100,12 @@ class Play extends Phaser.Scene {
         } else if (this.player2.HP <= 0) {
             this.gameStart = false
             this.playMusic.stop()
-            this.knockoutSFX.play()
+
+            if (!this.koSFXisPlaying) {
+                this.knockoutSFX.play()
+                this.koSFXisPlaying = true
+            }
+
             this.add.sprite(600, 400, 'KO').setOrigin(0.45, 0.5).setScale(12)
             this.time.delayedCall(1750, () => {
                 this.scene.start(`${this.p1}WinnerScene`)

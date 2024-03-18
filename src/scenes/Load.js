@@ -9,9 +9,7 @@ class Load extends Phaser.Scene {
 
         // UI
         this.load.image('title', 'logo.png')
-        this.load.image('new-game', 'ui_new_game.png')
-        this.load.image('how-to-play', 'ui_how_to_play.png')
-        this.load.image('credits', 'ui_credits.png')
+        this.load.image('menu-selection', 'MenuSelection.png')
         this.load.image('arrow', 'arrow.png')
         this.load.image('KO', 'KO.png')
         this.load.image('FIGHT', 'fight.png')
@@ -54,6 +52,8 @@ class Load extends Phaser.Scene {
 
         // Audio
         this.load.audio('rumble-winner', 'RumbleWinner.wav')
+        this.load.audio('karate-winner', 'KarateWinner.wav')
+        this.load.audio('menu-music', 'menu_music.wav')
         this.load.audio('cutscene-sfx', 'cutscene.wav')
         this.load.audio('fight-sfx', 'fight.wav')
         this.load.audio('karate-win-sfx', 'karate_win.wav')
@@ -143,7 +143,6 @@ class Load extends Phaser.Scene {
         this.anims.create({ key: 'karate-pose-end', frameRate: 12, repeat: -1, frames: this.anims.generateFrameNumbers('dr-karate-win-end', { start: 0, end: 1 }) })
 
         // proceed once loading completes
-        // this.scene.start('menuScene') //TODO
-        this.scene.start('playScene')
+        this.scene.start('menuScene')
     }
 }

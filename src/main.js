@@ -20,8 +20,9 @@ let config = {
     scene: [ Load, Tutorial, Credits, Menu, Cutscene, Select, Play, RumbleWinner, KarateWinner ]
 }
 
-// define game\
+// define game
 let game = new Phaser.Game(config)
 
 // define globals
+let musicOn, backgroundMusic
 let { height, width } = game.config

@@ -1,6 +1,8 @@
 class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene")
+
+        musicOn = false
     }
  
     init() {
@@ -17,6 +19,12 @@ class Menu extends Phaser.Scene {
         this.background.play('fight-background')
 
         // audio
+        if (!musicOn) {
+            backgroundMusic = this.sound.add('menu-music', { loop: true , volume: 0.8})
+            backgroundMusic.play()
+            musicOn = true
+        }
+
         this.selectSFX_1 = this.sound.add('select-sfx-1')
         this.selectSFX_2 = this.sound.add('select-sfx-2')
 
@@ -31,9 +39,7 @@ class Menu extends Phaser.Scene {
         })
 
         // menu select options
-        this.add.sprite(width/2, 540, 'new-game').setOrigin(0.5).setScale(2)
-        this.add.sprite(width/2, 600, 'how-to-play').setOrigin(0.5).setScale(2)
-        this.add.sprite(width/2, 660, 'credits').setOrigin(0.5).setScale(2)
+        this.add.sprite(width/2, 600, 'menu-selection').setOrigin(0.5).setScale(2)
  
         // Menu select state machine
         this.menuOptions = new OptionSelect(this, width/2, height/2, 'new-game', 0)
@@ -65,8 +71,8 @@ class OptionSelect extends Phaser.Physics.Arcade.Sprite {
  
 class NewGameSelect extends State {
     enter(scene) {
-        scene.arrow = scene.add.sprite(775, 537, 'arrow')
-        scene.arrow.setOrigin(0.5)
+        scene.arrow = scene.add.sprite(765, 535, 'arrow')
+        scene.arrow.setOrigin(0.5).setScale(2.5)
     }
  
     execute(scene) {
@@ -86,6 +92,8 @@ class NewGameSelect extends State {
             scene.selectSFX_2.play()
             scene.arrow.destroy()
             this.isTransitioning = true
+            backgroundMusic.stop()
+            musicOn = false
             scene.cameras.main.fadeOut(750, 255, 255, 255)
             scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 scene.scene.start('selectScene')
@@ -96,8 +104,8 @@ class NewGameSelect extends State {
  
 class HowToPlaySelect extends State {
     enter(scene) {
-        scene.arrow = scene.add.sprite(803, 596, 'arrow')
-        scene.arrow.setOrigin(0.5)
+        scene.arrow = scene.add.sprite(798, 597, 'arrow')
+        scene.arrow.setOrigin(0.5).setScale(2.5)
     }
  
     execute(scene) {
@@ -131,8 +139,8 @@ class HowToPlaySelect extends State {
  
 class CreditsSelect extends State {
     enter(scene) {
-        scene.arrow = scene.add.sprite(747, 658, 'arrow')
-        scene.arrow.setOrigin(0.5)
+        scene.arrow = scene.add.sprite(735, 663, 'arrow')
+        scene.arrow.setOrigin(0.5).setScale(2.5)
     }
 
     execute(scene) {

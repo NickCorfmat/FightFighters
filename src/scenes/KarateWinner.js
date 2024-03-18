@@ -9,6 +9,8 @@ class KarateWinner extends Phaser.Scene {
 
         // audio
         this.selectSFX_2 = this.sound.add('select-sfx-2')
+        this.winnerTheme = this.sound.add('karate-winner')
+        this.winnerTheme.play()
 
         // winner name text
         this.karateName = this.add.sprite(width/2, 225, 'karate-name').setOrigin(0.5).setScale(3)
@@ -27,6 +29,7 @@ class KarateWinner extends Phaser.Scene {
             // check for transition back to main menu
             this.input.keyboard.on('keydown-M', function() {
                 this.selectSFX_2.play()
+                this.winnerTheme.stop()
                 this.scene.start('menuScene')
             }, this)
         })
