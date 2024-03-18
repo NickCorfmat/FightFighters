@@ -28,6 +28,7 @@ class Load extends Phaser.Scene {
         this.load.image('pink-fire-background', 'pink_fire_tilesprite.png')
         this.load.spritesheet('character-select', 'character_menu_background.png', { frameWidth: 220, frameHeight: 123 })
         this.load.image('tutorial-background', 'tutorial_background.png')
+        this.load.image('credits-background', 'credits_background.png')
         this.load.spritesheet('background', 'Background.png', { frameWidth: 600, frameHeight: 400 })
 
         // Custom font

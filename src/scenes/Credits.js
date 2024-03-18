@@ -10,9 +10,11 @@ class Credits extends Phaser.Scene {
         // audio
         this.selectSFX_1 = this.sound.add('select-sfx-1')
 
-        this.cameras.main.setBackgroundColor(0xfacade)
+        // background
+        this.cameras.main.setBackgroundColor(0x00237a)
+        this.add.sprite(width/2, height/2, 'credits-background').setOrigin(0.5).setScale(4)
 
-        this.add.bitmapText(970, 735, 'fight-font', 'Menu - [M]', 24).setOrigin(0)
+        this.add.bitmapText(930, 705, 'fight-font', 'Menu - [M]', 24).setOrigin(0)
     }
 
     update() {
