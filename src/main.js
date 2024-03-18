@@ -1,3 +1,16 @@
+/*
+Group Members: Nick Corfmat and Rayan Hirech
+Adapted Game: "Fight Fighters" from Gravity Falls, Season 1, Episode 10 (2012)
+
+Phaser components utilized:
+    1. physics
+    2. animations
+    3. tweens
+    4. timers
+    5. cameras (for scene transitions)
+    6. bitmap text
+*/
+
 "use strict"
 
 // define and configure game object
