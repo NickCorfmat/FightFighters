@@ -263,6 +263,11 @@ class RumblePunchState extends State {
             return
         }
 
+        if (fighter.y >= 100) {
+            fighter.grounded = true
+            fighter.body.setVelocityX(0)
+        }
+
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {

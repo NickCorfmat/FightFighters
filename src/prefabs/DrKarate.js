@@ -54,7 +54,7 @@ class DrKarate extends Phaser.Physics.Arcade.Sprite {
         this.fps = 16
         this.punchFrames = 10
         this.punchEndlag = 4
-        this.kickFrames = 8
+        this.kickFrames = 7
         this.kickEndlag = 1
         this.fireballFrames = 10
         this.justHit = false
@@ -249,6 +249,11 @@ class KaratePunchState extends State {
             return
         }
 
+        if (fighter.y >= 315) {
+            fighter.grounded = true
+            fighter.body.setVelocityX(0)
+        }
+
         if (fighter.currentFrame < fighter.punchFrames + fighter.punchEndlag) {
             // Buffer moves
             if(Phaser.Input.Keyboard.JustDown(punch)) {
@@ -403,6 +408,11 @@ class KarateKickState extends State {
         if (fighter.hitstunFrames > 0) {
             this.stateMachine.transition('hurt')
             return
+        }
+
+        if (fighter.y >= 315) {
+            fighter.grounded = true
+            fighter.body.setVelocityX(0)
         }
 
         if (fighter.currentFrame < fighter.kickFrames + fighter.kickEndlag) {
