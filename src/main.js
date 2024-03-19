@@ -16,6 +16,7 @@ Sources:
 3. Character spritesheets/typeface/character select screen by Paul Robertson, https://probertson.tumblr.com/post/31637353328/gravity-falls-animations
     Note: Menu/play background, cutscene animations, and Rumble's winning animation recreated from original Paul Robertson artwork
 4. SFX/dialogue from original Gravity Falls episode, a license of The Walt Disney Company
+5. 'Iambic Heavy Italic' font by OPTIFONT, https://fontmeme.com/fonts/iambic-heavy-italic-font/
 */
 
 "use strict"
